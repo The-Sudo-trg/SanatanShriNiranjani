@@ -1,7 +1,7 @@
 // Seed = product content (AGENT.md §8: never "clean" this data). Idempotent via explicit ids / upserts.
-import { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "../lib/prisma-create";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 // Asia/Kolkata day key (TESTING.md §13.4)
 function kolkataDateKey(offsetDays = 0): string {

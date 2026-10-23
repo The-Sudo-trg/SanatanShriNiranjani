@@ -2,7 +2,8 @@
 // Sacred prices live in lib/constants.ts, never mutated here.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"] // libSQL/Turso adapter in serverless (TECH_STACK ADR-002)
 }
 
 datasource db {
