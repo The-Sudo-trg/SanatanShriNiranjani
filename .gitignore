@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+
+# next.js build output
+.next/
+out/
+dist/
+build/
+
+# env — commit only .env.example (AGENT.md contract)
+.env
+.env*
+!.env.example
+
+# database (SQLite + Prisma artifacts)
+*.db
+*.db-journal
+prisma/dev.db*
+
+# testing
+coverage/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# next-pwa generated service worker
+public/sw.js*
+public/workbox-*.js
+public/fallback-*.js
+
+# typescript / next generated
+*.tsbuildinfo
+next-env.d.ts
+
+# deploy
+.vercel
+
+# misc
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.pem
