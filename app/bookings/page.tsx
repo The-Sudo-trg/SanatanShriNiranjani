@@ -13,8 +13,12 @@ export default async function BookingsPage() {
   const bookings = await prisma.booking.findMany({ orderBy: { createdAt: "desc" }, take: 50 });
 
   return (
-    <div className="space-y-4 p-4">
-      <h2 className="text-base font-bold text-maroonText">मेरी बुकिंग</h2>
+    <main className="min-h-full space-y-4 bg-[#FFF8F2] p-4">
+      <section className="rounded-[1.5rem] bg-gradient-to-br from-[#0F766E] to-[#115E59] p-5 text-white shadow-lg">
+        <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#FDE68A]">Satantani Seva</p>
+        <h2 className="mt-2 text-xl font-bold">मेरी बुकिंग</h2>
+        <p className="mt-1 text-xs text-white/75">आपकी सभी सेवा और संस्कार बुकिंग एक ही स्थान पर।</p>
+      </section>
       {bookings.length === 0 && (
         <p className="rounded-2xl border border-amber-100 bg-white p-6 text-center text-xs text-gray-500 shadow-sm">
           अभी कोई बुकिंग नहीं है। होम पेज से गाड़ी पूजन, नामकरण अथवा संत बुकिंग करें।
@@ -61,6 +65,6 @@ export default async function BookingsPage() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

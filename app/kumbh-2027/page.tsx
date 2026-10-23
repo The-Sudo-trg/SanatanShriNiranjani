@@ -10,8 +10,8 @@ export default async function KumbhPage() {
   const firstSnan = events.find((e) => e.kind === "SHAHI_SNAN");
 
   return (
-    <div className="space-y-4 p-4">
-      <div className="rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 p-4 text-center text-white shadow-md">
+    <main className="min-h-full space-y-4 bg-[#FFF8F2] p-4">
+      <div className="rounded-[1.5rem] bg-gradient-to-br from-[#C2410C] via-[#EA580C] to-[#B45309] p-5 text-center text-white shadow-lg">
         <Landmark className="mx-auto mb-1 h-7 w-7 text-gold" aria-hidden />
         <h2 className="text-base font-bold">महाकुंभ 2027 नेविगेटर</h2>
         <p className="mt-1 text-xs opacity-90">
@@ -74,6 +74,6 @@ export default async function KumbhPage() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

@@ -19,8 +19,13 @@ export default async function MenuPage() {
   }));
 
   return (
-    <div className="p-4">
+    <main className="min-h-full bg-[#FFF8F2] p-4">
+      <div className="mb-4 rounded-[1.5rem] bg-gradient-to-br from-[#292524] via-[#44403C] to-[#0F766E] p-5 text-white shadow-lg">
+        <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#FDE68A]">Your spiritual companion</p>
+        <h2 className="mt-2 text-xl font-bold">सतांतनी मेनू</h2>
+        <p className="mt-1 text-xs text-white/70">सेवाएँ, संत परिचय और आपकी डिजिटल पहचान।</p>
+      </div>
       <MenuClient saints={saintRows} />
-    </div>
+    </main>
   );
 }

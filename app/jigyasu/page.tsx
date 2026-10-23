@@ -13,8 +13,8 @@ export default async function JigyasuPage() {
   ]);
 
   return (
-    <div className="space-y-4 p-4">
-      <div className="rounded-2xl bg-gradient-to-r from-indigo-700 to-blue-700 p-4 text-white shadow-md">
+    <main className="min-h-full space-y-4 bg-[#FFF8F2] p-4">
+      <div className="rounded-[1.5rem] bg-gradient-to-br from-[#0F766E] via-[#115E59] to-[#164E63] p-5 text-white shadow-lg">
         <h2 className="text-base font-bold">सनातन सत्संग एवं जिज्ञासा मंच</h2>
         <p className="mt-1 text-xs opacity-90">संतों और भक्तों के साथ धार्मिक चर्चा व प्रश्नोत्तर।</p>
       </div>
@@ -48,6 +48,6 @@ export default async function JigyasuPage() {
         })}
         <AskQuestionButton />
       </div>
-    </div>
+    </main>
   );
 }

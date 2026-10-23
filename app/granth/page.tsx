@@ -22,8 +22,8 @@ export default async function GranthPage({
   const current = chapterNum ? chapters.find((c) => c.number === chapterNum) : null;
 
   return (
-    <div className="space-y-4 p-4">
-      <div className="rounded-2xl bg-gradient-to-r from-red-800 to-amber-800 p-4 text-white shadow-md">
+    <main className="min-h-full space-y-4 bg-[#FFF8F2] p-4">
+      <div className="rounded-[1.5rem] bg-gradient-to-br from-[#7C2D12] via-[#9A3412] to-[#B45309] p-5 text-white shadow-lg">
         <h2 className="text-base font-bold">सनातन डिजिटल ग्रंथालय एवं जप माला</h2>
         <p className="mt-1 text-xs opacity-90">वेद, पुराण, उपनिषद तथा डिजिटल जप काउंटर।</p>
       </div>
@@ -84,6 +84,6 @@ export default async function GranthPage({
           ))
         )}
       </div>
-    </div>
+    </main>
   );
 }
