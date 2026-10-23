@@ -8,7 +8,9 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  // The runtime adapter selects Turso when configured; this fallback keeps Prisma
+  // client initialization independent of a schema-time environment variable.
+  url      = "file:./dev.db"
 }
 
 model Panchang {
