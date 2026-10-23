@@ -62,6 +62,30 @@ test.describe("shell", () => {
     await expect(page.getByText("₹151")).toBeVisible();
     await expect(page.getByText("₹351")).toBeVisible();
   });
+
+  test("TC-HM-02 all 6 home grid tiles open their modal/page", async ({ page }) => {
+    await page.goto("/");
+    const grid = page.locator("main");
+    // modal-opens (लाइव दर्शन, AI जिज्ञासा, संत बुकिंग)
+    await grid.getByText("लाइव दर्शन").click();
+    await expect(page.getByText("अखाड़ा मंदिर लाइव दर्शन")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await grid.getByText("AI जिज्ञासा").click();
+    await expect(page.getByText("AI आध्यात्मिक सहायक")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await grid.getByText("संत बुकिंग").first().click();
+    await expect(page.getByText("घर पर संत एवं आचार्य बुकिंग")).toBeVisible();
+    await page.keyboard.press("Escape");
+    // page-opens (कुंभ 2027, गौ सेवा, पूजा स्टोर)
+    await grid.getByText("कुंभ 2027").click();
+    await expect(page).toHaveURL(/kumbh-2027/);
+    await page.goto("/");
+    await grid.getByText("गौ सेवा").click();
+    await expect(page).toHaveURL(/gau-seva/);
+    await page.goto("/");
+    await grid.getByText("पूजा स्टोर").click();
+    await expect(page).toHaveURL(/store/);
+  });
 });
 
 /* ---------------- search routing (F10, TC-SR-01..05) ---------------- */
@@ -189,6 +213,27 @@ test.describe("F1 bookings", () => {
     await page.locator("#sant-date").fill(futureDate(10));
     await page.getByRole("button", { name: "बुकिंग अनुरोध भेजें" }).click();
     await expect(page.getByText(/कृपया 10 अंकों का मोबाइल नंबर लिखें/)).toBeVisible();
+  });
+
+  test("TC-BK-06 rapid double submit creates exactly one row", async ({ page }) => {
+    // no DELETE API (public) — assert relative to the pre-test count instead
+    const before = (await (await page.request.get("/api/bookings")).json())
+      .bookings.filter((b: { vehicleNo: string | null }) => b.vehicleNo === "MH-02-CD-5678")
+      .length;
+    await page.goto("/");
+    await page.getByRole("button", { name: /गाड़ी पूजन/ }).click();
+    await page.locator("#gadi-name").fill("द्रोपदी रानी");
+    await page.locator("#gadi-no").fill("MH-02-CD-5678");
+    await page.locator("#gadi-date").fill(futureDate(21));
+    // two rapid parallel clicks; isSubmitting guard + disabled button must absorb the second
+    const submit = page.getByRole("button", { name: /पूजन बुक करें/ });
+    const rapidClicks = Promise.allSettled([submit.click(), submit.click()]);
+    await expect(page.getByText(/गाड़ी पूजन अनुरोध प्रशासन को भेज दिया गया है/)).toBeVisible();
+    await rapidClicks;
+
+    await page.goto("/bookings");
+    const rows = page.getByText("MH-02-CD-5678");
+    await expect(rows).toHaveCount(before + 1);
   });
 });
 
