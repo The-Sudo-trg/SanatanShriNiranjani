@@ -163,3 +163,18 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - **What:** (1) `scripts/prisma-generate.mjs` — retries generate after EPERM, stream-copies the query engine into `.prisma/client`; (2) `scripts/copyfile-patch.cjs` + `next-build.mjs`/`next-dev.mjs` — NODE_OPTIONS preload that falls back `fs.copyFile*` → read/write streaming only on EPERM.
 - **Replaces:** plain `prisma generate` / `next build` / `next dev` npm scripts. Inert on Windows/macOS/native-Linux (fallback never triggers). Zero bundle cost, zero dependencies added.
 - **Status:** Accepted 2026-10-23. Remove if the project moves fully onto a native-Linux volume.
+
+### ADR-002: Turso (libSQL) for serverless deploys — `@prisma/adapter-libsql`
+**Status:** implemented on 2026-10-23. **Context:** Vercel/Lambda has no persistent
+writable disk, so the repo-relative `file:./dev.db` cannot serve production writes.
+**Decision:** keep the SQLite provider + models untouched; at runtime swap the
+engine for the libSQL driver adapter when `TURSO_DATABASE_URL` is set
+(`lib/prisma-create.ts`, shared by `lib/db.ts` singleton and `prisma/seed.ts`).
+Local dev/Vitest/E2E keep the file client — zero behavior change. Schema reaches
+the remote DB via `prisma migrate diff --from-empty --to-schema-datamodel ... --script`
+piped through `turso db shell` (prisma migrate/db-push unsupported against Turso).
+Consequences: on Vercel set `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`
+(proj `sanatanshrinanjani`, db `sanatan-niranjani` @ aws-ap-south-1/Mumbai);
+`next.config.ts` lists the `@libsql/*` + `@prisma/adapter-libsql` packages under
+`serverExternalPackages` (the adapter's require.context glob otherwise drags
+READMEs into the webpack graph).
