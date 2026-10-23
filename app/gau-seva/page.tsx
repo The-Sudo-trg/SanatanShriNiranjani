@@ -8,10 +8,17 @@ import { prisma } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function GauSevaPage() {
-  const contributions = await prisma.gauContribution.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+  let contributions = [];
+
+  try {
+    contributions = await prisma.gauContribution.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+  } catch (error) {
+    // Keep the page usable when a preview has not initialized its local database yet.
+    if (process.env.NODE_ENV === "production") throw error;
+  }
 
   return (
     <div className="space-y-4 p-4">
