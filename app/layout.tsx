@@ -19,8 +19,8 @@ const devanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: "Satantani — Pure Pooja Samagri for Sacred Living",
-  description: "Authentic, handpicked and ethically sourced pooja samagri, puja kits and cow-based products delivered with devotion.",
+  title: "Satantani — Receive Divine Blessings, Anywhere",
+  description: "A peaceful digital temple for live darshan, spiritual guidance, aarti, blessings, and sacred living.",
   manifest: "/manifest.json",
   applicationName: "सनातन श्री निरंजनी",
 };

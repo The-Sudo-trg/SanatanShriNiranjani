@@ -1,52 +1,50 @@
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, BellRing, CircleDot, Flame, Flower2, Heart, Leaf, PackageCheck, ShieldCheck, Sparkles, Star, Truck, Wheat } from "lucide-react";
-import { prisma } from "@/lib/db";
+import { ArrowRight, Bell, BookOpen, CalendarDays, CheckCircle2, Flower2, Heart, Play, ShieldCheck, Sparkles, Star, Sun, Users, Volume2 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
-const categories = [
-  ["Agarbatti & Dhoop", Flame], ["Diyas & Thalis", Sparkles], ["Kumkum & Haldi", CircleDot],
-  ["Ghee & Panchamrit", Wheat], ["Flowers & Garlands", Flower2], ["Rudraksha & Malas", Leaf],
+const guides = [
+  ["Swami Anant Das", "Vaishnav · Vrindavan", "Bhakti, meditation & family guidance"],
+  ["Mata Amrit Jyoti", "Shaiv · Haridwar", "Mantra, healing & spiritual growth"],
+  ["Acharya Ved Prakash", "Sanatan Dharma · Varanasi", "Vedic studies & daily sadhana"],
 ];
-const products = [
-  ["Temple Grade Agarbatti", "Hand-rolled with natural resins", "₹149", "Bestseller", Flame],
-  ["Brass Diya — Lotus", "Handcrafted festive diya", "₹299", "Handmade", Sparkles],
-  ["Pure Cow Ghee", "A2 bilona ghee • 250 ml", "₹449", "Pure Ghee", Wheat],
-  ["Kumkum & Haldi Set", "Natural, auspicious powders", "₹199", "New", CircleDot],
+
+const festivals = [
+  ["27 Oct", "Dhanteras", "Special Lakshmi aarti · 7:00 PM"],
+  ["30 Oct", "Diwali Deepotsav", "Live darshan · 6:30 PM"],
+  ["06 Nov", "Govardhan Puja", "Gau seva & satsang · 8:00 AM"],
 ];
-const kits = ["Griha Pravesh Puja Kit", "Satyanarayan Puja Kit", "Ganesh Puja Kit", "Diwali Lakshmi Kit"];
 
-export default async function HomePage() {
-  const [suvichar] = await Promise.all([
-    prisma.suvichar.findFirst({ orderBy: { day: "asc" } }).catch(() => null),
-  ]);
-
+export default function HomePage() {
   return (
-    <div className="satantani-page">
-      <div className="festival-strip"><BellRing size={15} /> Diwali collections are here <Link href="/store">Shop festive puja kits <ArrowRight size={14} /></Link></div>
-      <section className="hero-shell">
-        <div className="hero-copy">
-          <p className="eyebrow"><span /> Purely devotional, thoughtfully sourced</p>
-          <h1>Pure Pooja Samagri for <em>Every Sacred Moment</em></h1>
-          <p className="hero-lede">Authentic, handpicked and ethically sourced puja essentials — delivered with devotion to your home.</p>
-          <div className="hero-actions"><Link className="button button-primary" href="/store">Shop Pooja Samagri <ArrowRight size={17} /></Link><Link className="button button-secondary" href="/store">Explore Puja Kits</Link></div>
-          <div className="trust-row"><span><BadgeCheck /> 100% Authentic</span><span><Heart /> Ethically sourced</span><span><Truck /> Pan-India delivery</span></div>
+    <main className="spiritual-home">
+      <div className="festival-strip"><Bell size={14} /> Daily aarti, blessings and spiritual guidance <Link href="#darshan">Enter the temple <ArrowRight size={14} /></Link></div>
+      <section className="spiritual-hero" id="home">
+        <div className="spiritual-hero-copy">
+          <p className="eyebrow"><span /> A peaceful digital temple</p>
+          <h1>Receive divine blessings, <em>anywhere.</em></h1>
+          <p className="hero-lede">Join live darshan, connect with revered spiritual guides, offer your prayers, and bring a little more peace into every day.</p>
+          <div className="hero-actions"><Link className="button button-primary" href="#darshan"><Play size={16} fill="currentColor" /> Watch live darshan</Link><Link className="button button-secondary" href="#blessings">Seek blessings <ArrowRight size={16} /></Link></div>
+          <div className="trust-row"><span><CheckCircle2 /> Live aarti daily</span><span><ShieldCheck /> Verified guides</span><span><Heart /> Private prayer requests</span></div>
         </div>
-        <div className="hero-art"><div className="mandala" /><div className="hero-glow" /><img src="/satantani-hero.png" alt="Peaceful sacred cow beside a diya and brass puja thali" /><span className="petal petal-one">✦</span><span className="petal petal-two">✦</span><div className="hero-note"><Sparkles size={16} /><span><strong>Made with devotion</strong><small>For your sacred rituals</small></span></div></div>
+        <div className="spiritual-hero-art"><div className="hero-mandala" /><div className="hero-glow" /><img src="/gau-mata.png" alt="Peaceful sacred Gau Mata surrounded by a glowing mandala" /><span className="hero-chip chip-one"><Sun size={15} /> Divine light</span><span className="hero-chip chip-two"><Flower2 size={15} /> With devotion</span></div>
       </section>
 
-      <section className="category-section"><div className="section-heading"><div><p className="eyebrow">Find your essentials</p><h2>Shop by category</h2></div><Link href="/store" className="text-link">View all <ArrowRight size={16} /></Link></div><div className="category-grid">{categories.map(([label, Icon]) => <Link href="/store" className="category-card" key={label as string}><span className="icon-disc"><Icon size={25} /></span><span>{label as string}</span><ArrowRight size={15} /></Link>)}</div></section>
+      <section className="darshan-section" id="darshan"><div className="section-heading"><div><p className="eyebrow">Be present in prayer</p><h2>Live darshan</h2></div><span className="live-pill"><i /> LIVE NOW</span></div><div className="darshan-grid"><div className="darshan-player"><img src="/gau-mata.png" alt="Live Gau Mata darshan" /><div className="player-overlay"><span className="player-label"><i /> Live darshan</span><div><h3>Gau Shala Sandhya Aarti</h3><p>Vrindavan · 482 devotees joined</p></div><button aria-label="Play live darshan"><Play size={22} fill="currentColor" /></button></div></div><div className="aarti-panel"><p className="panel-kicker">Today&apos;s aarti</p><h3>Sandhya Aarti</h3><p className="panel-muted">The evening light offering begins in</p><strong className="countdown">00 : 24 : 18</strong><div className="aarti-list"><span className="active"><b>Now</b> Gau Shala Darshan <small>Live</small></span><span><b>7:00 PM</b> Main Temple Aarti <small>Today</small></span><span><b>8:30 PM</b> Om chanting <small>Today</small></span></div><div className="offer-actions"><button><Sun size={15} /> Offer diya</button><button><Flower2 size={15} /> Offer flowers</button></div></div></div></section>
 
-      <section className="story-section"><div className="story-art"><div className="story-mandala" /><img src="/satantani-hero.png" alt="Illustration of Gau Mata, the sacred spirit of Satantani" /></div><div className="story-copy"><p className="eyebrow">The heart of Satantani</p><h2>Gau Mata — the sacred spirit of Satantani</h2><p>At Satantani, the cow is not just a symbol — she represents purity, nourishment, protection, and sacred Indian tradition.</p><div className="value-list"><div><span><Heart /></span><div><strong>Purity</strong><small>Essentials that honour every ritual.</small></div></div><div><span><Wheat /></span><div><strong>Nourishment</strong><small>Natural, honest and thoughtfully made.</small></div></div><div><span><ShieldCheck /></span><div><strong>Protection</strong><small>Tradition wrapped with modern care.</small></div></div></div><Link className="text-link" href="/menu">Discover our story <ArrowRight size={16} /></Link></div></section>
+      <section className="guides-section" id="guides"><div className="section-heading"><div><p className="eyebrow">Wisdom for your journey</p><h2>Revered sadhus & spiritual guides</h2></div><Link href="#guides" className="text-link">Meet all guides <ArrowRight size={16} /></Link></div><div className="guide-grid">{guides.map(([name, tradition, focus], index) => <article className="guide-card" key={name}><div className={`guide-avatar avatar-${index + 1}`}>{index === 0 ? "ॐ" : index === 1 ? "श्री" : "ॐ"}</div><div className="guide-copy"><span className="verified"><CheckCircle2 size={14} /> Verified by Satantani</span><h3>{name}</h3><p>{tradition}</p><small>{focus}</small><div><Link href="#blessings">Request blessing <ArrowRight size={14} /></Link><span className="available"><i /> Available</span></div></div></article>)}</div></section>
 
-      <section className="product-section"><div className="section-heading"><div><p className="eyebrow">Curated for your home temple</p><h2>Shop authentic pooja samagri</h2></div><Link href="/store" className="text-link">Browse the store <ArrowRight size={16} /></Link></div><div className="product-grid">{products.map(([name, desc, price, badge, Icon]) => <article className="product-card" key={name as string}><div className="product-image"><span className="product-badge">{badge as string}</span><button aria-label={`Add ${name as string} to wishlist`}><Heart size={18} /></button><Icon size={57} strokeWidth={1.2} /></div><div className="stars"><Star size={13} fill="currentColor" /> <span>4.9 · 38 reviews</span></div><h3>{name as string}</h3><p>{desc as string}</p><div className="product-bottom"><strong>{price as string}</strong><Link href="/store" aria-label={`View ${name as string}`}>View details <ArrowRight size={14} /></Link></div></article>)}</div></section>
+      <section className="blessings-section" id="blessings"><div className="blessing-art"><div className="diya"><span /></div><div className="blessing-rings" /></div><div className="blessing-copy"><p className="eyebrow">Your prayer is held with care</p><h2>Seek blessings & submit a prayer</h2><p>Share your prayer intention with devotion. Our guides and community will hold it in collective prayer.</p><form className="prayer-form"><label>Your prayer intention<input placeholder="What would you like to offer in prayer?" /></label><div className="form-row"><label>Your first name<input placeholder="First name" /></label><label>Prayer category<select defaultValue="Peace"><option>Peace</option><option>Health</option><option>Family</option><option>Gratitude</option></select></label></div><button className="button button-primary" type="button">Submit with devotion <ArrowRight size={16} /></button></form></div></section>
 
-      <section className="kit-section"><div className="section-heading"><div><p className="eyebrow">Everything in one box</p><h2>Complete puja kits for every occasion</h2></div></div><div className="kit-grid">{kits.map((kit, index) => <Link href="/store" className="kit-card" key={kit}><div className={`kit-art kit-art-${index + 1}`}><Sparkles size={30} /></div><div><h3>{kit}</h3><p>Curated essentials for a complete ritual</p><span className="text-link">View complete kit <ArrowRight size={15} /></span></div></Link>)}</div></section>
+      <section className="daily-section"><div className="daily-card"><div><p className="eyebrow">Blessing of the day</p><p className="sanskrit">धर्मो रक्षति रक्षितः</p><p className="translation">“Dharma protects those who protect it.”</p><span>— An invitation to walk with truth today</span></div><button aria-label="Play blessing audio"><Volume2 size={20} /></button></div><div className="daily-links"><Link href="#mantras"><BookOpen size={18} /> Aarti & mantras <ArrowRight size={14} /></Link><Link href="#calendar"><CalendarDays size={18} /> Festival calendar <ArrowRight size={14} /></Link></div></section>
 
-      <section className="benefits"><p className="eyebrow">Why devotees choose us</p><h2>Tradition, with a little more care</h2><div className="benefit-grid">{[[BadgeCheck,"Authentic & pure","Sourced with care and quality-checked."],[Heart,"Cow-centric values","Inspired by the sacredness of Gau Mata."],[PackageCheck,"Complete solutions","Everything you need, thoughtfully curated."],[Truck,"Delivered with devotion","Secure packaging and pan-India delivery."]].map(([Icon,title,copy]) => <div key={title as string}><span className="benefit-icon"><Icon /></span><h3>{title as string}</h3><p>{copy as string}</p></div>)}</div></section>
+      <section className="calendar-section" id="calendar"><div className="section-heading"><div><p className="eyebrow">Mark the sacred days</p><h2>Festival & spiritual calendar</h2></div><Link href="#calendar" className="text-link">View full calendar <ArrowRight size={16} /></Link></div><div className="festival-grid">{festivals.map(([date, title, detail]) => <article key={title}><time>{date}</time><div><h3>{title}</h3><p>{detail}</p></div><button aria-label={`Add ${title} to calendar`}><CalendarDays size={16} /></button></article>)}</div></section>
 
-      <section className="quote-section"><div className="quote-mark">“</div><p>{suvichar?.text ?? "धर्मो रक्षति रक्षितः"}</p><span>— The Satantani promise</span></section>
-      <footer className="site-footer"><div><div className="footer-logo"><span>ॐ</span><strong>Satantani</strong></div><p>Pure essentials for sacred living.<br />Made in India, delivered with devotion.</p></div><div><h4>Explore</h4><Link href="/store">Puja Samagri</Link><Link href="/store">Puja Kits</Link><Link href="/gau-seva">Gau Seva</Link></div><div><h4>Need help?</h4><Link href="/menu">About Satantani</Link><Link href="/menu">Contact us</Link><Link href="/menu">Shipping & returns</Link></div><div className="footer-news"><h4>Stay connected</h4><p>Festival guides and thoughtful offers, in your inbox.</p><div className="newsletter"><input aria-label="Email address" placeholder="Your email address" /><button aria-label="Subscribe"><ArrowRight /></button></div></div></footer>
-    </div>
+      <section className="gau-story"><div className="story-art"><div className="story-mandala" /><img src="/gau-mata.png" alt="Gau Mata, the sacred spirit of Satantani" /></div><div className="story-copy"><p className="eyebrow">The heart of Satantani</p><h2>Gau Mata — the sacred spirit of Satantani</h2><p>At Satantani, the cow is revered as a symbol of purity, nourishment, protection, and selfless service. We carry this sacred spirit into everyday life.</p><div className="value-list"><div><span><Sparkles /></span><b>Purity<small>Honour in every ritual.</small></b></div><div><span><Heart /></span><b>Nourishment<small>Care that gives back.</small></b></div><div><span><ShieldCheck /></span><b>Protection<small>A trusted spiritual home.</small></b></div></div></div></section>
+
+      <section className="sacred-items" id="items"><div className="section-heading"><div><p className="eyebrow">A quiet offering for your home temple</p><h2>Sacred items for your puja</h2></div><Link href="/store" className="text-link">Explore items <ArrowRight size={16} /></Link></div><div className="item-grid"><article className="item-card"><img src="/pure-cow-ghee.png" alt="Pure cow ghee in premium devotional packaging" /><div><span>For daily offerings</span><h3>Pure cow ghee</h3><p>For aarti, havan and sacred light.</p><strong>₹449</strong><Link href="/store">Enquire <ArrowRight size={14} /></Link></div></article><article className="item-card item-placeholder"><div><Sparkles size={22} /><span>Thoughtfully sourced</span><h3>Essential puja samagri</h3><p>Incense, kumkum, diya and more for your home temple.</p><Link href="/store">View sacred items <ArrowRight size={14} /></Link></div></article></div></section>
+
+      <section className="experiences"><p className="eyebrow">Blessings received</p><h2>Experiences from our community</h2><div className="experience-card"><div className="stars"><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /><Star size={14} fill="currentColor" /></div><blockquote>“Joining the evening aarti has become a quiet, beautiful part of my day. I feel connected even from far away.”</blockquote><span>— Meera, Pune</span></div></section>
+
+      <footer className="site-footer"><div><div className="footer-logo"><span>ॐ</span><strong>Satantani</strong></div><p>A peaceful digital temple for every seeker.<br />Made with devotion for every journey.</p></div><div><h4>Explore</h4><Link href="#darshan">Live darshan</Link><Link href="#guides">Sadhus & guides</Link><Link href="#blessings">Seek blessings</Link></div><div><h4>Resources</h4><Link href="#mantras">Aarti & mantras</Link><Link href="#calendar">Festival calendar</Link><Link href="/store">Sacred items</Link></div><div className="footer-news"><h4>Receive daily blessings</h4><p>Aarti reminders and gentle spiritual notes.</p><div className="newsletter"><input aria-label="Email address" placeholder="Your email address" /><button aria-label="Subscribe"><ArrowRight /></button></div></div><div className="footer-bottom">© 2026 Satantani · Made with devotion for every seeker.</div></footer>
+    </main>
   );
 }
