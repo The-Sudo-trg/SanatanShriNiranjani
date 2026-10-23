@@ -48,14 +48,15 @@ export default function FeatureGrid() {
       <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wider text-gray-700">
         मुख्य सेवाएँ एवं सुविधाएँ
       </h3>
-      <div className="grid grid-cols-3 gap-3 text-center">
+      <div className="grid grid-cols-3 gap-3 text-center sm:grid-cols-4 lg:grid-cols-6 lg:gap-4">
         {TILES.map((tile) =>
           "modal" in tile && tile.modal ? (
             <button
               key={tile.label}
               type="button"
               onClick={() => openModal(tile.modal as never)}
-              className="group flex min-h-11 cursor-pointer flex-col items-center justify-center rounded-2xl border border-amber-100 bg-white p-3 shadow-sm transition hover:bg-amber-50"
+              suppressHydrationWarning
+              className="group flex min-h-11 cursor-pointer flex-col items-center justify-center rounded-2xl border border-amber-100 bg-white p-3 shadow-sm transition hover:bg-amber-50 lg:p-4"
             >
               {tileBody(tile)}
             </button>
@@ -63,7 +64,8 @@ export default function FeatureGrid() {
             <Link
               key={tile.label}
               href={tile.href}
-              className="group flex min-h-11 cursor-pointer flex-col items-center justify-center rounded-2xl border border-amber-100 bg-white p-3 shadow-sm transition hover:bg-amber-50"
+              suppressHydrationWarning
+              className="group flex min-h-11 cursor-pointer flex-col items-center justify-center rounded-2xl border border-amber-100 bg-white p-3 shadow-sm transition hover:bg-amber-50 lg:p-4"
             >
               {tileBody(tile)}
             </Link>

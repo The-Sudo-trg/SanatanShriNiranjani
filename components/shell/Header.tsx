@@ -53,13 +53,13 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="z-10 flex items-center justify-between bg-gradient-to-r from-saffron to-deepSaffron px-4 py-3 text-white shadow-md">
+    <header suppressHydrationWarning className="z-10 flex items-center justify-between bg-gradient-to-r from-saffron to-deepSaffron px-4 py-3 text-white shadow-md sm:px-6 lg:px-8">
       <div className="flex items-center gap-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-lg font-bold text-maroonText shadow-inner">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-lg font-bold text-maroonText shadow-inner sm:h-10 sm:w-10 sm:text-xl">
           ॐ
         </div>
         <div>
-          <h1 className="text-base font-bold leading-tight tracking-wide">{APP_NAME}</h1>
+          <h1 className="text-base font-bold leading-tight tracking-wide sm:text-lg">{APP_NAME}</h1>
           <p className="text-[10px] opacity-90 tracking-wider">{APP_SUBTITLE}</p>
         </div>
       </div>
@@ -68,6 +68,7 @@ export default function Header() {
           type="button"
           aria-label="सूचनाएँ"
           onClick={() => openModal("NOTIFICATION")}
+          suppressHydrationWarning
           className="relative transition hover:text-gold"
         >
           <Bell className="h-5 w-5" />
@@ -81,6 +82,7 @@ export default function Header() {
           type="button"
           aria-label="पूजा स्टोर कार्ट"
           onClick={() => router.push("/store")}
+          suppressHydrationWarning
           className="relative transition hover:text-gold"
         >
           <ShoppingCart className="h-5 w-5" />
@@ -94,6 +96,7 @@ export default function Header() {
           type="button"
           aria-label="मेनू खोलें"
           onClick={() => router.push("/menu")}
+          suppressHydrationWarning
           className="transition hover:text-gold"
         >
           <UserRound className="h-6 w-6" aria-hidden />

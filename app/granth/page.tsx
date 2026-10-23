@@ -30,9 +30,9 @@ export default async function GranthPage({
 
       <JapMala />
 
-      <div className="space-y-2.5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {current ? (
-          <div className="space-y-3 rounded-2xl border border-amber-100 bg-white p-4 shadow-sm">
+          <div className="space-y-3 rounded-2xl border border-amber-100 bg-white p-4 shadow-sm sm:col-span-2 lg:col-span-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-gray-800">
                 अध्याय {current.number}: {current.titleHi}

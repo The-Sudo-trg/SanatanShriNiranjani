@@ -9,9 +9,10 @@ export default function QuickCards() {
   const openModal = useModalStore((s) => s.open);
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div suppressHydrationWarning className="grid grid-cols-2 gap-3">
       <button
         type="button"
+        suppressHydrationWarning
         onClick={() => openModal("GADI_PUJA")}
         className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-3 text-left shadow-sm transition hover:bg-amber-100"
       >
@@ -26,6 +27,7 @@ export default function QuickCards() {
       <button
         type="button"
         onClick={() => openModal("NAMKARAN")}
+        suppressHydrationWarning
         className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-3 text-left shadow-sm transition hover:bg-amber-100"
       >
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 text-purple-700">

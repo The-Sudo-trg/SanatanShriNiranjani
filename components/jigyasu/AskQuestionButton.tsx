@@ -10,6 +10,7 @@ export default function AskQuestionButton() {
     <button
       type="button"
       onClick={() => openModal("AI_CHAT")}
+      suppressHydrationWarning
       className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2.5 text-xs font-bold text-white shadow transition hover:bg-indigo-700"
     >
       <PlusCircle className="h-4 w-4" aria-hidden />

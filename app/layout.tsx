@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import Header from "@/components/shell/Header";
 import SearchBar from "@/components/shell/SearchBar";
 import BottomNav from "@/components/shell/BottomNav";
+import DesktopNav from "@/components/shell/DesktopNav";
 import ModalRoot from "@/components/shell/ModalRoot";
 import CartHydrator from "@/components/shell/CartHydrator";
 import { prisma } from "@/lib/db";
@@ -28,12 +29,19 @@ export const viewport: Viewport = {
   themeColor: "#FF6700",
   width: "device-width",
   initialScale: 1,
-}
+};
+
+// ---------- Responsive shell (3 tiers) --------------------------------------
+// <md      : mobile — full-bleed fluid width, bottom 5-tab bar (NAVIGATION §2)
+// md–lg    : tablet/landscape — centered rounded app card on the divine bg
+// ≥lg      : desktop — full-width app, left rail nav, content centered at 6xl
+// All tiers keep the app-window model (internal main scroll) so modals,
+// toasts and the PWA shell behave identically on every device.
+// Suppresses the form-filler-extension hydration noise (fdprocessedid).
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Seeded directory/temple content is shell-level (modals live on every page, NAVIGATION §4)
   const [temples, saints] = await Promise.all([
-    prisma.temple.findMany({ orderBy: { id: "asc" } }),
+    prisma.temple.findMany(),
     prisma.saint.findMany({ orderBy: { order: "asc" } }),
   ]);
   const templeRows: TempleRow[] = temples.map((t) => ({
@@ -54,14 +62,30 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }));
 
   return (
-    <html lang="hi" className={devanagari.variable}>
-      <body className="min-h-screen bg-divineBg font-devanagari text-gray-800">
-        {/* Mobile shell → desktop phone-frame (DESIGN §4) */}
-        <div className="flex min-h-screen justify-center sm:items-center sm:p-4">
-          <div className="relative flex h-screen w-full max-w-md flex-col overflow-hidden bg-white sm:h-[880px] sm:rounded-3xl sm:border sm:border-amber-200 sm:shadow-2xl">
+    <html lang="hi" className={devanagari.variable} suppressHydrationWarning>
+      <body
+        className="min-h-dvh bg-divineBg font-devanagari text-gray-800"
+        suppressHydrationWarning
+      >
+        <div
+          suppressHydrationWarning
+          className="flex min-h-dvh justify-center sm:items-center sm:p-4"
+        >
+          <div
+            suppressHydrationWarning
+            className="relative flex h-dvh w-full max-w-lg flex-col overflow-hidden bg-white
+                       sm:h-[900px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-3xl sm:border
+                       sm:border-amber-200 sm:shadow-2xl
+                       lg:max-w-none lg:h-dvh lg:max-h-none lg:rounded-none lg:border-none lg:shadow-none"
+          >
             <Header />
             <SearchBar />
-            <main className="hide-scrollbar flex-1 overflow-y-auto pb-24">{children}</main>
+            <div suppressHydrationWarning className="flex min-h-0 flex-1">
+              <DesktopNav />
+              <main className="hide-scrollbar min-w-0 flex-1 overflow-y-auto pb-24 lg:pb-8">
+                <div className="mx-auto w-full lg:max-w-6xl">{children}</div>
+              </main>
+            </div>
             <BottomNav />
             <ModalRoot temples={templeRows} saints={saintRows} />
             <CartHydrator />

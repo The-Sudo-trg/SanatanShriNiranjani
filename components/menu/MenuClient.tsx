@@ -34,6 +34,7 @@ export default function MenuClient({ saints }: { saints: SaintRow[] }) {
         <button
           type="button"
           onClick={() => setShowDirectory((v) => !v)}
+          suppressHydrationWarning
           className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-amber-600 py-2 text-xs font-bold text-white shadow transition hover:bg-amber-700"
         >
           <Users className="h-4 w-4" aria-hidden />
@@ -42,6 +43,7 @@ export default function MenuClient({ saints }: { saints: SaintRow[] }) {
         {showDirectory && <DirectorySection saints={saints} />}
         <Link
           href="/bookings"
+          suppressHydrationWarning
           className="flex w-full items-center justify-center rounded-xl bg-stone-800 py-2 text-xs font-bold text-white shadow transition hover:bg-stone-900"
         >
           मेरी बुकिंग देखें
@@ -54,6 +56,7 @@ export default function MenuClient({ saints }: { saints: SaintRow[] }) {
         <button
           type="button"
           onClick={() => openModal("VOLUNTEER")}
+          suppressHydrationWarning
           className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white shadow transition hover:bg-indigo-700"
         >
           <HeartHandshake className="h-4 w-4" aria-hidden />
@@ -62,6 +65,7 @@ export default function MenuClient({ saints }: { saints: SaintRow[] }) {
         <button
           type="button"
           onClick={() => setCertOpen(true)}
+          suppressHydrationWarning
           className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-saffron py-2 text-xs font-bold text-white shadow transition hover:bg-deepSaffron"
         >
           <ScrollText className="h-4 w-4" aria-hidden />

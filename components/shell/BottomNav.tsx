@@ -18,7 +18,8 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-around border-t border-amber-200 bg-white px-3 py-2 shadow-lg"
+      suppressHydrationWarning
+      className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-around border-t border-amber-200 bg-white px-3 py-2 shadow-lg lg:hidden"
       aria-label="मुख्य नेविगेशन"
     >
       {TABS.map(({ href, label, Icon }) => {
@@ -28,6 +29,7 @@ export default function BottomNav() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
+            suppressHydrationWarning
             className={`flex min-h-11 min-w-11 flex-col items-center justify-center px-2 transition ${
               active ? "text-saffron font-bold" : "text-gray-500 hover:text-saffron"
             }`}

@@ -77,7 +77,7 @@ export default function TreePlantationForm() {
             ))}
           </Select>
         </div>
-        <Button type="submit" variant="nature" className="w-full py-2.5" disabled={submitting}>
+        <Button type="submit" variant="nature" className="w-full py-2.5" disabled={submitting} suppressHydrationWarning>
           {submitting
             ? "भेजा जा रहा है…"
             : `वृक्षारोपण हेतु सहयोग दें & Book Now (₹${PRICES.TREE_PLANTATION})`}

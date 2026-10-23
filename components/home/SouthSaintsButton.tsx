@@ -9,6 +9,7 @@ export default function SouthSaintsButton() {
     <button
       type="button"
       onClick={() => openModal("SOUTH_SAINTS")}
+      suppressHydrationWarning
       className="mt-2 rounded-full bg-amber-600 px-3 py-1 text-[10px] font-medium text-white shadow transition hover:bg-amber-700"
     >
       संत दर्शन

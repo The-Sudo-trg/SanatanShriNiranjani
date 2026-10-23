@@ -56,6 +56,7 @@ export default function CharaSevaCard() {
             type="button"
             onClick={() => void contribute(tier.kind, tier.title, tier.amount)}
             disabled={pending !== null}
+            suppressHydrationWarning
             className="flex w-full items-center justify-between rounded-xl border border-amber-200 bg-amber-50 p-3 text-left transition hover:bg-amber-100 disabled:opacity-60"
           >
             <div>

@@ -33,6 +33,7 @@ export default function JapMala() {
         <button
           type="button"
           onClick={increment}
+          suppressHydrationWarning
           className="flex-1 rounded-xl bg-saffron py-2.5 text-xs font-bold text-white shadow transition hover:bg-deepSaffron active:scale-[0.98]"
         >
           मंत्र जप करें (+1)
@@ -40,6 +41,7 @@ export default function JapMala() {
         <button
           type="button"
           onClick={onReset}
+          suppressHydrationWarning
           className="rounded-xl bg-gray-200 px-4 py-2.5 text-xs font-bold text-gray-700 transition hover:bg-gray-300"
         >
           रीसेट

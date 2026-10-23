@@ -31,6 +31,7 @@ export default function SatsangPlayer() {
         type="button"
         aria-label={playing ? "सत्संग रोकें" : "सत्संग चलाएँ"}
         onClick={() => setPlaying((p) => !p)}
+        suppressHydrationWarning
         className="flex h-8 w-8 items-center justify-center rounded-full bg-saffron text-white shadow transition hover:bg-deepSaffron"
       >
         {playing ? <Pause className="h-3 w-3" aria-hidden /> : <Play className="h-3 w-3" aria-hidden />}

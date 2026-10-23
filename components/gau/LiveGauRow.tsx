@@ -11,6 +11,7 @@ export default function LiveGauRow() {
     <button
       type="button"
       onClick={() => openModal("LIVE_GAU")}
+      suppressHydrationWarning
       className="flex w-full items-center justify-between rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50 p-3.5 shadow-sm transition hover:bg-amber-100"
     >
       <span className="flex items-center gap-3">

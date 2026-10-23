@@ -24,8 +24,12 @@ export default async function GauSevaPage() {
       </div>
 
       <LiveGauRow />
-      <TreePlantationForm />
-      <CharaSevaCard />
+
+      {/* seva forms — side by side on larger screens */}
+      <div suppressHydrationWarning className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
+        <TreePlantationForm />
+        <CharaSevaCard />
+      </div>
 
       {/* recent seva — quiet gratitude list, solemn tone */}
       {contributions.length > 0 && (
