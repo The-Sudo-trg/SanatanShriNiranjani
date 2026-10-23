@@ -1,0 +1,164 @@
+// PRD.md §5 — Data Model (provider-agnostic; exact copy of contract)
+// Sacred prices live in lib/constants.ts, never mutated here.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Panchang {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  tithi     String
+  paksha    String
+  nakshatra String
+  muhurat   String
+  sunrise   String
+  note      String?
+}
+
+model Suvichar {
+  id     String @id @default(cuid())
+  text   String
+  source String?
+  day    Int    @default(1)
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  type       String // GADI_PUJA | NAMKARAN | SANT
+  personName String
+  phone      String?
+  vehicleNo  String?
+  date       DateTime
+  amount     Int?
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+}
+
+model GauContribution {
+  id            String   @id @default(cuid())
+  donorName     String
+  kind          String // TREE | CHARA_DAILY | CHARA_MONTHLY
+  treeType      String?
+  amount        Int
+  certificateNo String?
+  createdAt     DateTime @default(now())
+}
+
+model MalaCount {
+  id      String @id @default(cuid())
+  userKey String @default("local")
+  day     String
+  count   Int
+
+  @@unique([userKey, day])
+}
+
+model GitaChapter {
+  id             String  @id @default(cuid())
+  number         Int     @unique
+  titleHi        String
+  verseCount     Int
+  audioAvailable Boolean @default(false)
+}
+
+model GitaVerse {
+  id            String @id @default(cuid())
+  chapterNumber Int
+  number        Int
+  textHi        String
+  meaningHi     String
+
+  @@unique([chapterNumber, number])
+}
+
+model ForumPost {
+  id         String   @id @default(cuid())
+  authorName String
+  kind       String // QUESTION | ANSWER
+  body       String
+  parentId   String?
+  createdAt  DateTime @default(now())
+}
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  sessionKey String
+  role       String // user | assistant
+  content    String
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id        String  @id @default(cuid())
+  nameHi    String
+  price     Int
+  unit      String?
+  icon      String
+  certified Boolean @default(true)
+  active    Boolean @default(true)
+}
+
+model CartLine {
+  id        String @id @default(cuid())
+  productId String
+  qty       Int
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  buyerName String
+  phone     String
+  total     Int
+  status    String   @default("PENDING")
+  lines     Json
+  createdAt DateTime @default(now())
+}
+
+model Saint {
+  id       String  @id @default(cuid())
+  nameHi   String
+  pad      String
+  bioHi    String
+  originHi String?
+  memorial Boolean @default(false)
+  verified Boolean @default(true)
+  order    Int     @default(0)
+}
+
+model Volunteer {
+  id        String   @id @default(cuid())
+  name      String
+  whatsapp  String
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  titleHi   String
+  bodyHi    String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Temple {
+  id              String  @id @default(cuid())
+  nameHi          String
+  distanceText    String
+  isAkhadaBranch  Boolean @default(false)
+  lat             Float?
+  lng             Float?
+}
+
+model KumbhEvent {
+  id      String   @id @default(cuid())
+  titleHi String
+  date    DateTime
+  kind    String // SHAHI_SNAN | OTHER
+  noteHi  String?
+}
