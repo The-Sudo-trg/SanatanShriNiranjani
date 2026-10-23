@@ -1,3 +1,4 @@
+import type { PrismaClient } from "@prisma/client";
 import { createPrismaClient } from "@/lib/prisma-create";
 
 // Prisma singleton (TESTING.md §13.2 — one client across HMR/dev)
