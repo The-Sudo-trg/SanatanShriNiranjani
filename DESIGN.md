@@ -52,7 +52,10 @@ Rules: minimum readable size `text-[10px]`; never below. Devanagari line-height 
 
 ## 4. Layout & Radius System
 
-- **Mobile shell:** full-width on ≤ 640px; on desktop center a `max-w-md` column (`sm:rounded-3xl`, `h-[880px]` cap, `border-amber-200`, `shadow-2xl`) — the phone-frame presentation from the prototype.
+- **Responsive shell (3 tiers):**
+  - **< 640px (mobile):** full-bleed fluid width, bottom 5-tab bar, internal `main` scroll.
+  - **640–1024px (tablet):** centered rounded app card (`max-w-lg`, `sm:h-[900px]` cap, `sm:rounded-3xl`, `sm:border-amber-200`, `sm:shadow-2xl`) on the divine bg.
+  - **≥ 1024px (desktop):** full-width app (`lg:max-w-none`, no border/shadow) with a left nav rail (`w-20`, icon+label, same 5 tabs) and content centered at `lg:max-w-6xl`; bottom bar hidden (`lg:hidden`).
 - **Radii:** pill inputs/badges `rounded-full`; cards `rounded-2xl`; modals `rounded-3xl`; inner media blocks `rounded-xl`; icon tiles `rounded-xl`.
 - **Spacing scale:** page gutter `p-4`; card padding `p-3.5–p-4`; grid gap `gap-3`; section gap `space-y-4`; nav height ~64px; header ~56px.
 - **Scroll:** content area `overflow-y-auto` with hidden scrollbar (`.hide-scrollbar` pattern); bottom padding `pb-20` so content clears the nav.

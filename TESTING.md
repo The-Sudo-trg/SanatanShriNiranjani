@@ -14,7 +14,7 @@
 | TC-SH-02 | P0 | Tap each of the 5 bottom tabs | Correct page renders; active tab turns saffron+bold; previous scroll preserved per tab |
 | TC-SH-03 | P0 | Open any modal → press Esc / click overlay / ✕ | Modal closes; focus returns to trigger; scroll unlocked |
 | TC-SH-04 | P0 | Open modal A then trigger modal B | Only B visible; A closed; no stacked overlays |
-| TC-SH-05 | P1 | Resize 320px → 1440px | No horizontal scroll; ≥640px shows centered phone frame with rounded corners |
+| TC-SH-05 | P1 | Resize 320px → 1440px | No horizontal scroll at any width; <640px full-bleed + bottom bar; 640–1024px centered rounded app card; ≥1024px full-width app with left nav rail, bottom bar hidden |
 | TC-SH-06 | P1 | Check every icon-only button | Has Hindi `aria-label` |
 | TC-SH-07 | P2 | `prefers-reduced-motion: reduce` | LIVE pulse / bounce disabled |
 | TC-SH-08 | P0 | Restart server, reload app | All previously created data (bookings, contributions, mala, orders) still present |
