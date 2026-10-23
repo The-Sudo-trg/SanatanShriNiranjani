@@ -13,12 +13,25 @@ export default async function GranthPage({
   const { chapter } = await searchParams;
   const chapterNum = chapter ? Math.min(18, Math.max(1, Number.parseInt(chapter, 10) || 1)) : null;
 
-  const [chapters, verses] = await Promise.all([
-    prisma.gitaChapter.findMany({ orderBy: { number: "asc" } }),
-    chapterNum
-      ? prisma.gitaVerse.findMany({ where: { chapterNumber: chapterNum }, orderBy: { number: "asc" } })
-      : Promise.resolve([]),
-  ]);
+  type Chapter = Awaited<ReturnType<typeof prisma.gitaChapter.findMany>>[number];
+  type Verse = Awaited<ReturnType<typeof prisma.gitaVerse.findMany>>[number];
+
+  let chapters: Chapter[] = [];
+  let verses: Verse[] = [];
+
+  try {
+    [chapters, verses] = await Promise.all([
+      prisma.gitaChapter.findMany({ orderBy: { number: "asc" } }),
+      chapterNum
+        ? prisma.gitaVerse.findMany({ where: { chapterNumber: chapterNum }, orderBy: { number: "asc" } })
+        : Promise.resolve([]),
+    ]);
+  } catch {
+    // Keep the library usable in a fresh preview before the optional seed has run.
+    chapters = [];
+    verses = [];
+  }
+
   const current = chapterNum ? chapters.find((c) => c.number === chapterNum) : null;
 
   return (
