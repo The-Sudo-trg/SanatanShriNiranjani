@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* DESIGN.md §11 — Divine Saffron token bridge (Tailwind v4) */
+:root {
+  --color-saffron: #ff6700;
+  --color-deep-saffron: #d95300;
+  --color-gold: #ffd700;
+  --color-divine-bg: #fff9f0;
+  --color-card: #ffffff;
+  --color-maroon: #4a1500;
+}
+
+@theme {
+  --color-saffron: #ff6700;
+  --color-deepSaffron: #d95300;
+  --color-gold: #ffd700;
+  --color-divineBg: #fff9f0;
+  --color-cardBg: #ffffff;
+  --color-maroonText: #4a1500;
+  --font-devanagari: var(--font-noto-devanagari), "Noto Sans Devanagari", "Segoe UI", Tahoma,
+    Verdana, sans-serif;
+}
+
+body {
+  background: var(--color-divine-bg);
+}
+
+/* prototype scrollbar pattern */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* DESIGN.md §10 — reduced motion disables pulse/bounce */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

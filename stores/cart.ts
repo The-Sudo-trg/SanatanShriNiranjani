@@ -15,7 +15,7 @@ interface CartState {
 }
 
 // Cart persists server-side (CartLine table) — survives refresh (TC-ST-06)
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>((set) => ({
   items: [],
   hydrated: false,
   hydrate: async () => {

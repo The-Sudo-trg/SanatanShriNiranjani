@@ -20,7 +20,7 @@ export function daysUntil(target: Date | string): number {
 // Relative Hindi timestamp for forum/chat feeds
 export function relativeTimeHi(date: Date | string): string {
   const d = date instanceof Date ? date : new Date(date);
-  const mins = Math.max(0, Math.round((Date.now() - d.getTime()) / 60000));
+  const mins = Math.max(0, Math.floor((Date.now() - d.getTime()) / 60000));
   if (mins < 1) return "अभी-अभी";
   if (mins < 60) return `${mins} मिनट पूर्व`;
   const hours = Math.round(mins / 60);

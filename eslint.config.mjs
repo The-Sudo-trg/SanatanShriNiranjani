@@ -1,15 +1,8 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
+// eslint-config-next v16 ships native flat configs — spread them (no FlatCompat needed)
+const config = [
   {
     ignores: [
       "node_modules/**",
@@ -21,12 +14,15 @@ const eslintConfig = [
       "playwright-report/**",
       "test-results/**",
       "next-env.d.ts",
-      "public/sw.js*",
+      "public/sw.js",
       "public/workbox-*.js",
+      "public/fallback-*.js",
       "om-sanata_shree_nirnjanee.html",
+      "scripts/**",
     ],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   {
     rules: {
       // Approved saint photos are served from their canonical remote URLs (DESIGN §8);
@@ -36,4 +32,4 @@ const eslintConfig = [
   },
 ];
 
-export default eslintConfig;
+export default config;
