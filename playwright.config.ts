@@ -20,7 +20,9 @@ export default defineConfig({
     timezoneId: "Asia/Kolkata",
     viewport: { width: 375, height: 667 }, // TC-SH-01 viewport
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  // Explicit viewport AFTER the device spread — Desktop Chrome's 1280×720 would
+  // otherwise override it and run the suite on the desktop tier (TC-SH-02 contract: 375×667).
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 375, height: 667 } } }],
   webServer: {
     command: "node scripts/next-dev.mjs --webpack --port 3100",
     url: "http://localhost:3100",
