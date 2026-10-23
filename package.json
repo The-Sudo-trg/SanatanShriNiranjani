@@ -4,15 +4,15 @@
   "private": true,
   "description": "सनातन श्री निरंजनी — Sanatan Shri Niranjani Master App (श्री पंचायती अखाड़ा निरंजनी)",
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
+    "dev": "node scripts/next-dev.mjs --webpack",
+    "build": "node scripts/prisma-generate.mjs && node scripts/next-build.mjs --webpack",
     "start": "next start",
-    "postinstall": "prisma generate",
+    "postinstall": "node scripts/prisma-generate.mjs",
     "lint": "eslint .",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "node scripts/pw-test.mjs",
     "format": "prettier --write ."
   },
   "devDependencies": {

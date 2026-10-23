@@ -18,7 +18,7 @@
 | [`AGENT.md`](./AGENT.md) | Operating rules for AI coding agents working in this repo |
 | [`om-sanata_shree_nirnjanee.html`](./om-sanata_shree_nirnjanee.html) | Original visual prototype (reference only, not part of the build) |
 
-## 🚀 Quick Start (after the app is generated)
+## 🚀 Quick Start
 
 ```bash
 npm install
@@ -28,6 +28,28 @@ npm run dev        # http://localhost:3000
 ```
 
 Production: `npm run build && npm start` — deploy target: Vercel (see TECH_STACK.md §7).
+
+### Verify the whole contract
+
+```bash
+npm run lint       # ESLint — zero errors
+npm run test       # Vitest unit suite (22 tests)
+npm run test:e2e   # Playwright flows F1–F10 (spawns its own dev server on :3100)
+```
+
+### Platform note — WSL2 / `/mnt` (drvfs) users
+
+node's `fs.copyFile` (copy_file_range(2)) fails with EPERM *inside* a Windows mount.
+This repo ships three small shims so every npm script works on both native and WSL
+environments:
+
+- `scripts/prisma-generate.mjs` — `prisma generate` wrapper; retries and places the
+  query engine via stream copy when the drvfs copy fails.
+- `scripts/next-build.mjs` / `scripts/next-dev.mjs` — Dev/build wrappers that preload
+  `scripts/copyfile-patch.cjs` (NODE_OPTIONS) so Next.js artifact copies fall back
+  transparently to read/write streaming on EPERM. On Windows/macOS the patch is inert.
+
+No behavior on native platforms changes; no extra dependencies were added.
 
 ## 🛠️ Build Workflow (recommended)
 

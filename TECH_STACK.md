@@ -153,3 +153,13 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 | TypeScript | `strict: true`, zero errors |
 | ESLint | zero errors, zero warnings on `main` |
 | Devanagari rendering | zero tofu (□) glyphs — verified in TESTING.md §8 |
+
+---
+
+## ADR Log
+
+### ADR-001: WSL2/drvfs build shims (`scripts/`, no new deps)
+- **Why:** On WSL2 with the project under `/mnt/...` (Windows mount), node `fs.copyFile` fails EPERM inside the mount (`copy_file_range(2)` quirk). Two places hit it: Prisma's engine copy during `prisma generate`, and Next.js internal artifact copy (`_not-found.html` → `pages/404.html`) during `next build`.
+- **What:** (1) `scripts/prisma-generate.mjs` — retries generate after EPERM, stream-copies the query engine into `.prisma/client`; (2) `scripts/copyfile-patch.cjs` + `next-build.mjs`/`next-dev.mjs` — NODE_OPTIONS preload that falls back `fs.copyFile*` → read/write streaming only on EPERM.
+- **Replaces:** plain `prisma generate` / `next build` / `next dev` npm scripts. Inert on Windows/macOS/native-Linux (fallback never triggers). Zero bundle cost, zero dependencies added.
+- **Status:** Accepted 2026-10-23. Remove if the project moves fully onto a native-Linux volume.
