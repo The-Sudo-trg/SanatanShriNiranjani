@@ -19,8 +19,8 @@ const devanagari = Noto_Sans_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: "सनातन श्री निरंजनी — Sanatan Shri Niranjani Master App",
-  description: "श्री पंचायती अखाड़ा निरंजनी — सनातन धर्म का डिजिटल द्वार",
+  title: "Satantani — Pure Pooja Samagri for Sacred Living",
+  description: "Authentic, handpicked and ethically sourced pooja samagri, puja kits and cow-based products delivered with devotion.",
   manifest: "/manifest.json",
   applicationName: "सनातन श्री निरंजनी",
 };
@@ -41,8 +41,8 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [temples, saints] = await Promise.all([
-    prisma.temple.findMany(),
-    prisma.saint.findMany({ orderBy: { order: "asc" } }),
+    prisma.temple.findMany().catch(() => []),
+    prisma.saint.findMany({ orderBy: { order: "asc" } }).catch(() => []),
   ]);
   const templeRows: TempleRow[] = temples.map((t) => ({
     id: t.id,

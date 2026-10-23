@@ -53,9 +53,9 @@ export default function Header() {
   }, []);
 
   return (
-    <header suppressHydrationWarning className="z-10 flex items-center justify-between bg-gradient-to-r from-saffron to-deepSaffron px-4 py-3 text-white shadow-md sm:px-6 lg:px-8">
+    <header suppressHydrationWarning className="sticky top-0 z-10 flex items-center justify-between border-b border-[#F0E2D8] bg-[#FFF8F2]/90 px-4 py-3 text-[#1F1B18] shadow-sm backdrop-blur-md sm:px-6 lg:px-8">
       <div className="flex items-center gap-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold text-lg font-bold text-maroonText shadow-inner sm:h-10 sm:w-10 sm:text-xl">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFE4D1] text-lg font-bold text-[#E85F0C] shadow-inner sm:h-10 sm:w-10 sm:text-xl">
           ॐ
         </div>
         <div>
