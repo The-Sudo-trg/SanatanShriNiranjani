@@ -16,6 +16,46 @@ const nextConfig: NextConfig = {
     "@libsql/isomorphic-fetch",
     "@libsql/isomorphic-ws",
   ],
+  // Temple photos are sourced from Wikimedia Commons (verified licenses — see
+  // lib/data/temple-records.ts and /content-sources). Optimize them at the edge.
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "upload.wikimedia.org" },
+    ],
+  },
+  // Security headers (brief Phase 12). CSP allows Next's inline bootstrap
+  // ('unsafe-inline'/'unsafe-eval' — Next.js hydration + Workbox SW); no
+  // third-party scripts are used, so script sources stay tight.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "geolocation=(self), camera=(), microphone=(), payment=()",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://upload.wikimedia.org",
+              "font-src 'self' data:",
+              "connect-src 'self' https://upload.wikimedia.org",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join("; "),
+          },
+        ],
+      },
+    ];
+  },
 };
 
 // next-pwa (Workbox) — PWA installability + offline shell (TECH_STACK §1).

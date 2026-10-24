@@ -1,28 +1,70 @@
 @import "tailwindcss";
 
-/* DESIGN.md §11 — Divine Saffron token bridge (Tailwind v4) */
+/* Design system v2 ("Warm Cream / Sacred Saffron") — brief Phase 2 palette.
+   Legacy v1 token names (gold, divineBg, maroonText, deepSaffron) are kept as
+   aliases so existing components keep working; their values now resolve to the
+   new palette. No hex literals in components (AGENT.md §3). */
 :root {
-  --color-saffron: #ff6700;
-  --color-deep-saffron: #d95300;
-  --color-gold: #ffd700;
-  --color-divine-bg: #fff9f0;
-  --color-card: #ffffff;
-  --color-maroon: #4a1500;
+  --color-cream: #fff8f2;
+  --color-surface: #fffdf9;
+  --color-charcoal: #1f1b18;
+  --color-muted: #6b625c;
+  --color-saffron: #ff7722;
+  --color-saffron-deep: #d95300;
+  --color-saffron-soft: #ffe4d1;
+  --color-teal: #0f766e;
+  --color-warm-border: #f0e2d8;
+  --color-footer: #1f1b18;
+  --color-success: #157f3d;
+  --color-live: #e5484d;
 }
 
 @theme {
-  --color-saffron: #ff6700;
+  /* new tokens */
+  --color-cream: #fff8f2;
+  --color-surface: #fffdf9;
+  --color-charcoal: #1f1b18;
+  --color-muted: #6b625c;
+  --color-saffron: #ff7722;
+  --color-saffronDeep: #d95300;
+  --color-saffronSoft: #ffe4d1;
+  --color-teal: #0f766e;
+  --color-tealSoft: #e4f2f0;
+  --color-warmBorder: #f0e2d8;
+  --color-footerBg: #1f1b18;
+  --color-success: #157f3d;
+  --color-live: #e5484d;
+
+  /* legacy aliases → v2 values (see header comment) */
+  --color-divineBg: #fff8f2;
+  --color-cardBg: #fffdf9;
+  --color-gold: #ffe4d1;
+  --color-maroonText: #1f1b18;
   --color-deepSaffron: #d95300;
-  --color-gold: #ffd700;
-  --color-divineBg: #fff9f0;
-  --color-cardBg: #ffffff;
-  --color-maroonText: #4a1500;
+
   --font-devanagari: var(--font-noto-devanagari), "Noto Sans Devanagari", "Segoe UI", Tahoma,
     Verdana, sans-serif;
+  --font-body: var(--font-inter), var(--font-noto-devanagari), "Segoe UI", Tahoma, sans-serif;
+  --font-heading: var(--font-playfair), "Playfair Display", Georgia, var(--font-noto-devanagari),
+    serif;
 }
 
 body {
-  background: var(--color-divine-bg);
+  background: var(--color-cream);
+  color: var(--color-charcoal);
+}
+
+/* Editorial headings use the serif stack; Devanagari automatically falls back
+   to Noto Sans Devanagari (declared after Playfair in --font-heading). */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* visible, consistent focus ring (WCAG 2.2 focus-appearance) */
+:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* prototype scrollbar pattern */
@@ -34,13 +76,21 @@ body {
   scrollbar-width: none;
 }
 
-/* DESIGN.md §10 — reduced motion disables pulse/bounce */
+/* Delicate mandala-inspired dot pattern for hero/section backdrops */
+.mandala-dots {
+  background-image: radial-gradient(var(--color-warm-border) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* reduced motion: disable pulse/bounce and shorten transitions */
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse,
-  .animate-bounce {
+  .animate-bounce,
+  .animate-spin {
     animation: none !important;
   }
   * {
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

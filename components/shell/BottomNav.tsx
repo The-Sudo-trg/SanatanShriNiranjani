@@ -2,36 +2,38 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Beef, BookOpen, House, MessagesSquare, Settings } from "lucide-react";
+import { House, Landmark, ScrollText, Settings, Sunrise } from "lucide-react";
 
+// Tab set v2 (brief §3 IA): होम, दैनिक दर्शन, मंदिर, मंत्र, मेनू.
+// गौ-सेवा / जिज्ञासा / ग्रंथ / स्टोर remain reachable from home cards, the
+// desktop header, the menu page and the footer (no scope dropped).
 const TABS = [
   { href: "/", label: "होम", Icon: House },
-  { href: "/gau-seva", label: "गौ-सेवा", Icon: Beef },
-  { href: "/granth", label: "ग्रंथ", Icon: BookOpen },
-  { href: "/jigyasu", label: "जिज्ञासा", Icon: MessagesSquare },
+  { href: "/daily-darshan", label: "दर्शन", Icon: Sunrise },
+  { href: "/temples", label: "मंदिर", Icon: Landmark },
+  { href: "/mantras", label: "मंत्र", Icon: ScrollText },
   { href: "/menu", label: "मेनू", Icon: Settings },
 ] as const;
 
-// DESIGN.md §5.10 — fixed 5-tab bar, active saffron bold, ≥44px targets
+// Fixed 5-tab bar, active saffron bold, ≥44px targets; fixed (not absolute)
+// since the v2 shell is a normal document flow site, not an app window.
 export default function BottomNav() {
   const pathname = usePathname();
 
   return (
     <nav
-      suppressHydrationWarning
-      className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-around border-t border-amber-200 bg-white px-3 py-2 shadow-lg lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-warmBorder bg-surface px-3 py-2 shadow-[0_-4px_12px_rgba(31,27,24,0.06)] lg:hidden"
       aria-label="मुख्य नेविगेशन"
     >
       {TABS.map(({ href, label, Icon }) => {
-        const active = pathname === href;
+        const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
         return (
           <Link
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            suppressHydrationWarning
             className={`flex min-h-11 min-w-11 flex-col items-center justify-center px-2 transition ${
-              active ? "text-saffron font-bold" : "text-gray-500 hover:text-saffron"
+              active ? "font-bold text-saffron" : "text-muted hover:text-saffron"
             }`}
           >
             <Icon className="h-4 w-4" aria-hidden />

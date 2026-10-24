@@ -45,9 +45,9 @@ export default function SearchBar() {
   }
 
   return (
-    <div suppressHydrationWarning className="flex items-center gap-2 border-b border-amber-100 bg-amber-50 px-4 py-2">
+    <div className="flex items-center gap-2 border-b border-warmBorder bg-cream px-4 py-2">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-amber-600" aria-hidden />
+        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden />
         <input
           type="text"
           value={value}
@@ -58,14 +58,14 @@ export default function SearchBar() {
           placeholder="मंदिर, संत, गाड़ी पूजन या नाम से खोजें..."
           aria-label="खोजें"
           suppressHydrationWarning
-          className="w-full rounded-full border border-amber-200 bg-white py-2 pl-9 pr-4 text-xs shadow-sm focus:outline-none focus:ring-2 focus:ring-saffron"
+          className="w-full rounded-full border border-warmBorder bg-surface py-2 pl-9 pr-4 text-xs shadow-sm focus:outline-none focus:ring-2 focus:ring-saffron"
         />
       </div>
       <button
         type="button"
         onClick={() => openModal("NEARBY")}
         suppressHydrationWarning
-        className="whitespace-nowrap rounded-full bg-saffron px-3 py-2 text-xs font-medium text-white shadow transition hover:bg-deepSaffron"
+        className="whitespace-nowrap rounded-full bg-saffron px-3 py-2 text-xs font-medium text-white shadow transition hover:bg-saffronDeep"
       >
         <MapPin className="mr-1 inline h-3 w-3" aria-hidden />
         पास के मंदिर
