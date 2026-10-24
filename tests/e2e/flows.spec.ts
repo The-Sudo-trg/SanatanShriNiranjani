@@ -4,7 +4,9 @@ import { expect, type Page, test } from "@playwright/test";
 
 /* ---------------- helpers ---------------- */
 
-const TAB = (name: string) => `nav >> text=${name}`;
+// Bottom mobile tab bar only — the header nav and footer navs share labels,
+// so scope every tab lookup to the fixed bottom bar (v2 site shell).
+const TAB = (name: string) => `nav[aria-label="मुख्य नेविगेशन"] >> text="${name}"`;
 
 // Arm window.confirm handling BEFORE the triggering click. Must NOT be awaited:
 // the promise-based pattern (`await page.on('dialog', …)` before the click) can
@@ -35,14 +37,14 @@ test.describe("shell", () => {
     await page.goto("/");
     await expect(page.getByText("आज का पंचांग")).toBeVisible();
     for (const [tab, url, marker] of [
-      ["गौ-सेवा", "/gau-seva", "गौशाला चारा सेवा एवं गोवंश गोद लें"],
-      ["ग्रंथ", "/granth", "डिजिटल जप माला काउंटर"],
-      ["जिज्ञासा", "/jigyasu", "सनातन सत्संग एवं जिज्ञासा मंच"],
+      ["दर्शन", "/daily-darshan", "आज का मन्दिर दर्शन"],
+      ["मंदिर", "/temples", "मंदिर सूची"],
+      ["मंत्र", "/mantras", "मंत्र एवं स्तोत्र"],
       ["मेनू", "/menu", "डिजिटल परिचय पत्र"],
     ] as const) {
       await page.locator(TAB(tab)).click();
       await expect(page).toHaveURL(new RegExp(url.replace("/", "/")));
-      await expect(page.getByText(marker)).toBeVisible();
+      await expect(page.getByText(marker).first()).toBeVisible();
     }
   });
 
@@ -66,7 +68,8 @@ test.describe("shell", () => {
   test("TC-HM-02 all 6 home grid tiles open their modal/page", async ({ page }) => {
     await page.goto("/");
     const grid = page.locator("main");
-    // modal-opens (लाइव दर्शन, AI जिज्ञासा, संत बुकिंग)
+    // modal-opens (लाइव दर्शन, AI जिज्ञासा, संत बुकिंग) — grid tiles carry
+    // exact tile labels; the रुचि section also links गौ सेवा so scope tightly.
     await grid.getByText("लाइव दर्शन").click();
     await expect(page.getByText("अखाड़ा मंदिर लाइव दर्शन")).toBeVisible();
     await page.keyboard.press("Escape");
@@ -76,11 +79,12 @@ test.describe("shell", () => {
     await grid.getByText("संत बुकिंग").first().click();
     await expect(page.getByText("घर पर संत एवं आचार्य बुकिंग")).toBeVisible();
     await page.keyboard.press("Escape");
-    // page-opens (कुंभ 2027, गौ सेवा, पूजा स्टोर)
+    // page-opens (कुंभ 2027, गौ सेवा, पूजा स्टोर) — exact names avoid the
+    // "गौ सेवा एवं प्रकृति" interest card added by the v2 homepage.
     await grid.getByText("कुंभ 2027").click();
     await expect(page).toHaveURL(/kumbh-2027/);
     await page.goto("/");
-    await grid.getByText("गौ सेवा").click();
+    await grid.getByText("गौ सेवा", { exact: true }).click();
     await expect(page).toHaveURL(/gau-seva/);
     await page.goto("/");
     await grid.getByText("पूजा स्टोर").click();
@@ -275,6 +279,17 @@ test.describe("gau seva", () => {
 /* ---------------- F4 जप माला ---------------- */
 
 test.describe("F4 jap mala", () => {
+  // The counter syncs optimistically: arm a POST /api/mala listener BEFORE the
+  // click and await its response, otherwise a reload's GET can read the server
+  // before the tap/reset commits (observed as count+1 after reload).
+  const malaPost = (page: import("@playwright/test").Page) =>
+    page
+      .waitForResponse(
+        (r) => r.url().includes("/api/mala") && r.request().method() === "POST",
+        { timeout: 5000 }
+      )
+      .catch(() => undefined);
+
   test("tap ×5 → refresh → 5 → reset(accept) → 0 (TC-ML-01..03)", async ({ page }) => {
     await page.goto("/granth");
     const counter = page.locator("div.text-3xl.tabular-nums");
@@ -282,21 +297,28 @@ test.describe("F4 jap mala", () => {
 
     // isolate from any state left by earlier runs/retries (counter persists per day)
     armDialog(page, "accept");
+    let sync = malaPost(page);
     await page.getByRole("button", { name: "रीसेट" }).click();
+    await sync;
     await expect(counter).toHaveText("0");
-    await tap.click();
     await page.reload();
     await expect(counter).toHaveText("0"); // reset persisted
 
-    for (let i = 0; i < 5; i++) await tap.click();
+    for (let i = 0; i < 5; i++) {
+      sync = malaPost(page);
+      await tap.click();
+      await sync;
+    }
     await expect(counter).toHaveText("5");
 
     await page.reload();
     await expect(counter).toHaveText("5"); // persisted by day (TC-ML-02)
 
     armDialog(page, "accept"); // "क्या आप वाकई काउंट रीसेट करना चाहते हैं?"
+    sync = malaPost(page);
     await page.getByRole("button", { name: "रीसेट" }).click();
     await expect(counter).toHaveText("0");
+    await sync;
 
     await page.reload();
     await expect(counter).toHaveText("0"); // reset persisted

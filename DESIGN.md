@@ -146,3 +146,43 @@ body { background: var(--color-divine-bg); }
 ```
 
 Class names in code (`text-maroonText`, `bg-divineBg`, `text-saffron`, `bg-gold`) must compile against these tokens so every doc/design reference stays truthful.
+
+---
+
+## 12. Design System v2 — "Warm Cream / Sacred Saffron" (2026-10-24, brief Phase 2)
+
+> v2 supersedes the v1 hex values (ADR-003). Token **names** of v1 remain valid
+> aliases; new components should prefer the v2 token names below.
+
+### 12.1 Color tokens (brief-exact)
+
+| Token | Hex | Usage |
+|---|---|---|
+| `cream` | `#FFF8F2` | Main background (60% visual weight with `surface`) |
+| `surface` | `#FFFDF9` | Cards, panels, inputs |
+| `charcoal` | `#1F1B18` | Primary text, footer background, structural elements |
+| `muted` | `#6B625C` | Secondary text |
+| `saffron` | `#FF7722` | Primary accent / important actions (~10% weight) |
+| `saffronDeep` | `#D95300` | Hover / pressed states |
+| `saffronSoft` | `#FFE4D1` | Soft tint chips, active nav pill (~5% with teal) |
+| `teal` / `tealSoft` | `#0F766E` / `#E4F2F0` | Secondary accent, source links, nature module |
+| `warmBorder` | `#F0E2D8` | Card borders |
+| `footerBg` | `#1F1B18` | Footer band |
+| `success` | `#157F3D` | Success / verification |
+| `live` | `#E5484D` | Live indicator only |
+
+### 12.2 Typography
+
+- Headings: Playfair Display (`font-heading`), falls back to Noto Sans Devanagari for Devanagari text.
+- Body: Inter (`font-body`) + Noto Sans Devanagari for Hindi.
+- Hindi/Sanskrit scripture: `font-heading` + `lang="sa"` attribute.
+- Minimum body size stays `text-xs` (12px) for UI copy; scripture quotes may go larger.
+
+### 12.3 Component vocabulary
+
+- Buttons: `rounded-full`, `min-h-11` (44px targets), saffron solid / bordered ghost.
+- Cards: `rounded-2xl border-warmBorder bg-surface shadow-sm` (+ `hover:shadow-md`).
+- Chips/badges: `rounded-full bg-saffronSoft` or `bg-tealSoft`.
+- Focus: global `:focus-visible` 2px saffron outline (WCAG 2.2).
+- Motion: hover lift/scale ≤1.03, 300ms; `prefers-reduced-motion` disables all.
+- Unverified data: literal text "सत्यापित नहीं" in `text-muted` — never styled as fact.

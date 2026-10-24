@@ -178,3 +178,36 @@ Consequences: on Vercel set `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN`
 `next.config.ts` lists the `@libsql/*` + `@prisma/adapter-libsql` packages under
 `serverExternalPackages` (the adapter's require.context glob otherwise drags
 READMEs into the webpack graph).
+
+### ADR-003: Design system v2 ("Warm Cream / Sacred Saffron") + new site IA
+**Status:** implemented 2026-10-24 per client transformation brief (Phase 2/3).
+**Context:** the brief mandates a specific token palette (#FFF8F2 cream,
+#FF7722 saffron, #0F766E teal, #1F1B18 charcoal, #F0E2D8 borders…), editorial
+serif headings (Playfair Display), Inter body, and a broader website IA
+(temple directory, daily darshan, festivals, mantras, saved, search, legal).
+This supersedes AGENT.md §2.7 ("no redesign") for this engagement.
+**Decision:** v1 token names (saffron/gold/divineBg/maroonText/deepSaffron)
+remain as CSS aliases mapped onto the v2 palette so all existing components
+keep compiling and rendering; new tokens (`cream, surface, charcoal, muted,
+saffronSoft, teal, tealSoft, warmBorder, footerBg, success, live`) are added
+in `app/globals.css`. The app-window shell (max-w-lg card) became a normal
+document-flow site shell (sticky header + footer + fixed mobile bottom bar);
+BottomNav moved from absolute to fixed, tabs updated to the new IA (गौ-सेवा,
+जिज्ञासा, ग्रंथ, स्टोर remain reachable from home, header, menu and footer).
+Sacred business data (prices, seeded names, Hindi contract strings) untouched.
+**New data layer:** `lib/data/` static typed records (temples, festivals,
+mantras, wisdom) with per-record sources + lastVerified; `lib/site-search.ts`
+local search index; `lib/favorites.ts` localStorage favorites (zustand
+persist); `lib/geo.ts` optional geolocation (haversine, permission-gated).
+**New deps:** none. `next/image` gains `remotePatterns` for
+`upload.wikimedia.org` (Commons-licensed temple photos — see ADR-004).
+**Bundle cost:** +2 Google fonts (Inter, Playfair Display) self-hosted via
+`next/font`; no JS libraries added.
+
+### ADR-004: Temple photography — Wikimedia Commons only
+**Status:** adopted 2026-10-24. Photos are Commons files with recorded author +
+license (CC0 / CC BY-SA 3.0 / CC BY-SA 4.0 / FAL / PD), hot-linked from
+`upload.wikimedia.org` through the Next image optimizer. Every temple page
+shows inline attribution + source page link. Where no correctly-licensed photo
+of the actual temple exists, a clean ॐ placeholder is used — never a similar
+temple's photo, never AI-generated imagery presented as photography.

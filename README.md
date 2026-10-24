@@ -90,3 +90,25 @@ git push -u origin main
 ## 📜 License & Content Note
 
 Code: MIT (c) 2026 The-Sudo-trg. Religious content, saint names, and imagery belong to श्री पंचायती अखाड़ा निरंजनी and are used with devotional intent; memorial content (स्मृति खंड) must always remain solemn.
+
+---
+
+## v2 Site (2026-10-24) — transformation brief
+
+New public surface alongside the akhada app (see `worklog/2026-10-24-phase-11-site-transformation.md`, TECH_STACK.md ADR-003/004):
+
+- **मंदिर सूची** `/temples` — 10 verified Delhi NCR temples (sources + last-verified dates, Commons photos), optional distance sorting.
+- **दैनिक दर्शन** `/daily-darshan` — daily featured temple + dated Gita/upanishadic wisdom + panchang (DB-seeded only) + upcoming festivals.
+- **मंत्र** `/mantras` — 12 sourced mantras (Devanagari, transliteration, meaning, adjustable text size, copy).
+- **पर्व** `/festivals` — drikpanchang.com-verified dates with regional notes and per-entry source links.
+- **खोज** `/search`, **सेव किया हुआ** `/saved` (localStorage-only favorites), `/about`, `/contact`, `/privacy`, `/terms`, `/content-sources`.
+
+Extra commands:
+
+```bash
+npm run test:e2e          # Playwright: flows.spec.ts (F1–F10) + site.spec.ts (new IA)
+npx playwright install chromium   # once per machine
+k6 run tests/load/k6-load-test.js # load test — LOCAL/STAGING ONLY, never production
+```
+
+CI: `.github/workflows/ci.yml` (lint → unit → build → e2e → npm audit). Security headers + CSP in `next.config.ts`.

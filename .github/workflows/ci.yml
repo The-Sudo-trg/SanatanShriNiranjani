@@ -1,0 +1,51 @@
+# CI (brief Phase 17) — lint → unit → build → critical e2e → dependency scan.
+# Heavier visual/load runs belong to scheduled workflows on staging, not PRs.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies (reproducible)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Production build
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL || 'file:./dev.db' }}
+
+      - name: E2E critical flows (Playwright)
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL || 'file:./dev.db' }}
+
+      - name: Dependency vulnerability scan (report-only)
+        run: npm audit --audit-level=high || true
+
+      - name: Publish test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
