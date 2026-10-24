@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  Beef,
   BookOpen,
   HousePlug,
   Landmark,
@@ -11,13 +10,14 @@ import {
   Video,
 } from "lucide-react";
 import { useModalStore } from "@/stores/modals";
+import CowIcon from "@/components/icons/CowIcon";
 
 // NAVIGATION §3.1 — 6-tile feature grid: each opens its modal/page (TC-HM-02)
 const TILES = [
   { label: "लाइव दर्शन", modal: "LIVE_DARSHAN", Icon: Video, tile: "bg-orange-100 text-saffron" },
   { label: "कुंभ 2027", href: "/kumbh-2027", Icon: Landmark, tile: "bg-yellow-100 text-amber-600" },
   { label: "AI जिज्ञासा", modal: "AI_CHAT", Icon: MessagesSquare, tile: "bg-indigo-100 text-indigo-600" },
-  { label: "गौ सेवा", href: "/gau-seva", Icon: Beef, tile: "bg-amber-100 text-amber-700" },
+  { label: "गौ सेवा", href: "/gau-seva", Icon: CowIcon, tile: "bg-amber-100 text-amber-700" },
   { label: "पूजा स्टोर", href: "/store", Icon: Store, tile: "bg-red-100 text-red-600" },
   { label: "संत बुकिंग", modal: "BOOKING", Icon: HousePlug, tile: "bg-blue-100 text-blue-600" },
 ] as const;

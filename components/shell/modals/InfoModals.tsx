@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Beef, Image as ImageIcon, MapPin, PlayCircle } from "lucide-react";
+import { Bell, Image as ImageIcon, MapPin, PlayCircle } from "lucide-react";
+import CowIcon from "@/components/icons/CowIcon";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -74,7 +75,7 @@ export function LiveGauModal() {
           श्री निरंजनी गौशाला लाइव कैमरा
         </DialogTitle>
         <div className="relative flex h-40 w-full items-center justify-center rounded-2xl bg-amber-900 text-white">
-          <Beef className="h-10 w-10 animate-pulse text-gold" aria-hidden />
+          <CowIcon className="h-10 w-10 animate-pulse text-gold" aria-hidden />
           <span className="absolute left-2 top-2">
             <Badge variant="live">● LIVE FEED</Badge>
           </span>
