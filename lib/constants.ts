@@ -28,10 +28,10 @@ export const BHAKT_ID = "SN-2027-9842";
 export const APP_NAME = "सनातन श्री निरंजनी";
 export const APP_SUBTITLE = "श्री पंचायती अखाड़ा निरंजनी";
 
-export const GOLDEN_BABA_PHOTO =
-  "https://media.assettype.com/truescoopnews%2Fimport%2Fnews%2F1737719278207.webp?w=480&auto=format%2Ccompress&fit=max";
-export const SOUTH_SAINTS_PHOTO =
-  "https://keralaheritage.org/arable/images/Spiritual/SwamyChinmayanandaSaraswathy.jpg";
+// NOTE: the old GOLDEN_BABA_PHOTO / SOUTH_SAINTS_PHOTO hotlinks pointed at news
+// CDNs and Kerala-heritage pages with unclear reuse rights. They were removed for
+// production (no unlicensed hotlinking). Verified free-licensed photographs now
+// live in lib/data/sadhus.ts (Wikimedia Commons, with attribution + licence).
 
 // Global search keyword routing (NAVIGATION §5 — first match wins, in this order)
 export const SEARCH_ROUTES: Array<{ pattern: RegExp; modal: string }> = [

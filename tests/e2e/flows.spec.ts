@@ -65,16 +65,14 @@ test.describe("shell", () => {
     await expect(page.getByText("₹351")).toBeVisible();
   });
 
-  test("TC-HM-02 all 6 home grid tiles open their modal/page", async ({ page }) => {
+  test("TC-HM-02 all 5 home grid tiles open their modal/page", async ({ page }) => {
     await page.goto("/");
     const grid = page.locator("main");
-    // modal-opens (लाइव दर्शन, AI जिज्ञासा, संत बुकिंग) — grid tiles carry
-    // exact tile labels; the रुचि section also links गौ सेवा so scope tightly.
+    // modal-opens (लाइव दर्शन, संत बुकिंग) — grid tiles carry exact tile labels;
+    // the रुचि section also links गौ सेवा so scope tightly. (AI जिज्ञासा tile was
+    // removed from the landing grid by owner request — chat remains on /jigyasu.)
     await grid.getByText("लाइव दर्शन").click();
     await expect(page.getByText("अखाड़ा मंदिर लाइव दर्शन")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await grid.getByText("AI जिज्ञासा").click();
-    await expect(page.getByText("AI आध्यात्मिक सहायक")).toBeVisible();
     await page.keyboard.press("Escape");
     await grid.getByText("संत बुकिंग").first().click();
     await expect(page.getByText("घर पर संत एवं आचार्य बुकिंग")).toBeVisible();
@@ -363,8 +361,9 @@ test.describe("F4 jap mala", () => {
 
 test.describe("F5 AI chat", () => {
   test("TC-AI-01/02 intro + disclaimer + ask flow", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("button", { name: /AI जिज्ञासा/ }).click();
+    // chat entry stays on the जिज्ञासा page (removed from the landing grid)
+    await page.goto("/jigyasu");
+    await page.getByRole("button", { name: /अपना नया प्रश्न पूछें/ }).click();
     await expect(page.getByText("AI आध्यात्मिक सहायक")).toBeVisible();
     await expect(page.getByText(/नमस्ते! मैं सनातन संस्कृति/)).toBeVisible();
     // guru disclaimer always visible in intro bubble (PRD M5)
@@ -482,10 +481,12 @@ test.describe("F7 directory", () => {
 
     const search = page.getByLabel("पदाधिकारी खोजें");
     await search.fill("महामंडलेश्वर");
-    await expect(page.getByText("पद: आचार्य / महामंडलेश्वर")).toBeVisible();
-    await expect(page.getByText("महामंडलेश्वर स्वामी श्री ... जी महाराज")).toBeVisible();
+    // Verified directory (lib/data/sadhus.ts) — living Golden Baba + Acharya Kailashanand Giri
+    await expect(page.getByText(/गोल्डन बाबा/).first()).toBeVisible();
+    await expect(page.getByText(/कैलाशानंद गिरि/).first()).toBeVisible();
+    await expect(page.getByText("पद: महामंडलेश्वर — श्री पंचायती अखाड़ा निरंजनी")).toBeVisible();
 
-    await page.getByRole("button", { name: "जीवन गाथा एवं संस्मरण देखें" }).click();
+    await page.getByRole("button", { name: "श्रद्धेय गोल्डन बाबा — जीवन गाथा देखें" }).click();
     const babaDialog = page.locator('[role="dialog"]').filter({ hasText: "गोल्डन बाबा" });
     // modal-only content (home card behind the overlay must not match)
     await expect(babaDialog.getByRole("heading", { level: 2 })).toBeVisible();
@@ -506,7 +507,7 @@ test.describe("F7 directory", () => {
 test.describe("F8 volunteer", () => {
   test("TC-VL-01 valid registration → पास toast", async ({ page }) => {
     await page.goto("/menu");
-    await page.getByRole("button", { name: /सेवा दल \(Volunteer\) पंजीकरण/ }).click();
+    await page.getByRole("button", { name: /सेवा दल \(स्वयंसेवक\) पंजीकरण/ }).click();
     await page.locator("#vol-name").fill("अर्जुन सिंह");
     await page.locator("#vol-wa").fill("9112345678");
     await page.getByRole("button", { name: "सेवा दल पास प्राप्त करें" }).click();
@@ -515,7 +516,7 @@ test.describe("F8 volunteer", () => {
 
   test("TC-VL-02 WhatsApp '123' rejected", async ({ page }) => {
     await page.goto("/menu");
-    await page.getByRole("button", { name: /सेवा दल \(Volunteer\) पंजीकरण/ }).click();
+    await page.getByRole("button", { name: /सेवा दल \(स्वयंसेवक\) पंजीकरण/ }).click();
     await page.locator("#vol-name").fill("अर्जुन सिंह");
     await page.locator("#vol-wa").fill("123");
     await page.getByRole("button", { name: "सेवा दल पास प्राप्त करें" }).click();
@@ -555,15 +556,18 @@ test.describe("F9 notifications", () => {
 /* ---------------- menu / digital ID / certificate (TC-MN-01, TC-CE-01) ---------------- */
 
 test.describe("menu", () => {
-  test("TC-MN-01 profile, digital ID (SN-2027-9842 + QR), directory, volunteer, cert, bookings", async ({ page }) => {
+  test("TC-MN-01 menu: session-aware account card, digital ID (SN-2027-9842 + QR), directory, volunteer, cert, bookings", async ({ page }) => {
     await page.goto("/menu");
-    await expect(page.getByText("पंजीकृत सनातन भक्त")).toBeVisible();
+    // Logged-out visitors get a real login/register invitation — never a fake identity.
+    await expect(page.getByRole("heading", { name: "मेरी प्रोफ़ाइल" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "लॉग इन" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "पंजीकरण" }).first()).toBeVisible();
     await expect(page.getByText(/SN-2027-9842/).first()).toBeVisible();
-    await expect(page.getByText("QR Verified")).toBeVisible();
+    await expect(page.getByText("क्यूआर सत्यापित")).toBeVisible();
     const qrSvg = page.getByLabel("भक्त आईडी क्यूआर कोड");
     await expect(qrSvg).toBeVisible(); // QR placeholder requirement
     await expect(page.getByRole("button", { name: /पदाधिकारी सूची/ })).toBeVisible();
-    await expect(page.getByRole("button", { name: /सेवा दल \(Volunteer\) पंजीकरण/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /सेवा दल \(स्वयंसेवक\) पंजीकरण/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /संकल्प ई-सर्टिफिकेट डाउनलोड करें/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /मेरी बुकिंग/ })).toBeVisible();
   });

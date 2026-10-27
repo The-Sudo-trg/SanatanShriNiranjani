@@ -82,6 +82,20 @@ body {
   background-size: 18px 18px;
 }
 
+/* Landing "संत दर्शन" scroll-reveal (components/home/SadhuShowcase.tsx).
+   Content is visible by default and animates when it enters the viewport, so a
+   JS failure (or no IntersectionObserver) can never hide real content. */
+@keyframes sn-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* reduced motion: disable pulse/bounce and shorten transitions */
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse,

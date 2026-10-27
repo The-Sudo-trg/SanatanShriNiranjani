@@ -19,9 +19,11 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
     return saints.filter((s) => !s.memorial && (s.nameHi.includes(q) || s.pad.includes(q)));
   }, [saints, query]);
 
+  const memorials = useMemo(() => saints.filter((s) => s.memorial), [saints]);
+
   return (
     <div className="space-y-3">
-      <input
+      <input suppressHydrationWarning
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -45,22 +47,33 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
           </div>
           {s.verified && (
             <div className="mt-2 border-t border-amber-200 pt-2">
-              <Badge variant="verified">✔ Verified Digital ID (QR Code)</Badge>
+              <Badge variant="verified">✔ सत्यापित डिजिटल परिचय पत्र (क्यूआर)</Badge>
             </div>
           )}
         </div>
       ))}
 
-      {/* स्मृति खंड — memorial block (solemn) */}
+      {/* स्मृति खंड — दिवंगत संत (solemn) + गोल्डन बाबा (जीवित) की जीवन-गाथा */}
       <div className="space-y-2 rounded-2xl border border-stone-300 bg-stone-100 p-3.5">
-        <h4 className="text-xs font-bold text-stone-800">स्मृति खंड (Memorial Profile)</h4>
-        <p className="text-xs font-bold text-gray-800">ब्रह्मलीन श्री गोल्डन बाबा जी</p>
+        <h4 className="text-xs font-bold text-stone-800">स्मृति खंड (दिवंगत संत)</h4>
+        {memorials.length === 0 ? (
+          <p className="text-xs text-gray-600">स्मृति-सूची शीघ्र उपलब्ध होगी।</p>
+        ) : (
+          <ul className="space-y-1">
+            {memorials.map((s) => (
+              <li key={s.id} className="text-xs font-bold text-gray-800">
+                ॐ {s.nameHi}
+              </li>
+            ))}
+          </ul>
+        )}
         <Button
+          suppressHydrationWarning
           variant="memorial"
           className="w-full py-1.5 text-[11px]"
           onClick={() => openModal("GOLDEN_BABA")}
         >
-          जीवन गाथा एवं संस्मरण देखें
+          श्रद्धेय गोल्डन बाबा — जीवन गाथा देखें
         </Button>
       </div>
     </div>
@@ -85,7 +98,7 @@ export function CertificateDialog({ open, onClose }: { open: boolean; onClose: (
           </p>
           <p className="mt-3 text-[9px] text-gray-500">डिजिटल प्रमाणपत्र • sanatanniranjani.in</p>
         </div>
-        <Button
+        <Button suppressHydrationWarning
           variant="primary"
           className="w-full"
           onClick={() => toast.message("PDF डाउनलोड शीघ्र उपलब्ध होगा।")}

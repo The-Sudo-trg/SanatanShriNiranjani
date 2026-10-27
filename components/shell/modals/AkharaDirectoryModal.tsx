@@ -43,7 +43,7 @@ export function AkharaDirectoryModal({ saints }: { saints: SaintRow[] }) {
           <Landmark className="h-4 w-4 text-saffron" aria-hidden />
           श्री पंचायती अखाड़ा निरंजनी (पदाधिकारी सूची)
         </DialogTitle>
-        <input
+        <input suppressHydrationWarning
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -67,8 +67,10 @@ export function AkharaDirectoryModal({ saints }: { saints: SaintRow[] }) {
                 </div>
               </div>
               <div className="flex items-center justify-between border-t border-amber-200 pt-1 text-[10px]">
-                {s.verified && <Badge variant="verified">✔ Verified Digital ID (QR Code)</Badge>}
-                <button
+                {s.verified && (
+                  <Badge variant="verified">✔ सत्यापित डिजिटल परिचय पत्र (क्यूआर)</Badge>
+                )}
+                <button suppressHydrationWarning
                   type="button"
                   onClick={contactStub}
                   className="font-bold text-saffron hover:underline"
@@ -82,19 +84,32 @@ export function AkharaDirectoryModal({ saints }: { saints: SaintRow[] }) {
           {/* स्मृति खंड — solemn, stone palette, no playful animation (DESIGN §8) */}
           <div className="space-y-2 rounded-2xl border border-stone-300 bg-stone-100 p-3.5">
             <h4 className="flex items-center gap-1.5 text-xs font-bold text-stone-800">
-              <span aria-hidden>स्मृति खंड (Memorial Profile)</span>
+              <span aria-hidden>स्मृति खंड (दिवंगत संत)</span>
             </h4>
-            <p className="text-xs font-bold text-gray-800">ब्रह्मलीन श्री गोल्डन बाबा जी</p>
+            {saints.filter((s) => s.memorial).length === 0 ? (
+              <p className="text-xs text-gray-600">स्मृति-सूची शीघ्र उपलब्ध होगी।</p>
+            ) : (
+              <ul className="space-y-1">
+                {saints
+                  .filter((s) => s.memorial)
+                  .map((s) => (
+                    <li key={s.id} className="text-xs font-bold text-gray-800">
+                      ॐ {s.nameHi}
+                    </li>
+                  ))}
+              </ul>
+            )}
             <Button
+              suppressHydrationWarning
               variant="memorial"
               className="w-full py-1.5 text-[11px]"
               onClick={() => openModal("GOLDEN_BABA")}
             >
-              जीवन गाथा एवं संस्मरण देखें
+              श्रद्धेय गोल्डन बाबा — जीवन गाथा देखें
             </Button>
           </div>
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           बंद करें
         </Button>
       </DialogContent>

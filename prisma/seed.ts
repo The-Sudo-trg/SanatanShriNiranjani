@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 
 import { createPrismaClient } from "../lib/prisma-create";
 import { hashPassword } from "../lib/auth";
+import { SADHUS } from "../lib/data/sadhus";
 
 const prisma = createPrismaClient();
 
@@ -73,55 +74,37 @@ async function main() {
     },
   });
 
-  // ---------- Saints (directory + memorial + south masters) ----------
-  const saints = [
-    {
-      id: "saint-mahamandaleshwar-1",
-      nameHi: "महामंडलेश्वर स्वामी श्री ... जी महाराज",
-      pad: "आचार्य / महामंडलेश्वर",
-      bioHi: "श्री पंचायती अखाड़ा निरंजनी के वरिष्ठ पदाधिकारी।",
-      originHi: "हरिद्वार, उत्तराखंड",
-      memorial: false,
-      verified: true,
-      order: 1,
-    },
-    {
-      id: "saint-golden-baba",
-      nameHi: "महामंडलेश्वर एस.के. नारायण गिरि (गोल्डन बाबा)",
-      pad: "आचार्य / महामंडलेश्वर",
-      bioHi:
-        "मूल निवास: केरल (दक्षिण भारत), वर्तमान में दिल्ली व हरिद्वार। महाकुंभ मेलों में लगभग 4 किलोग्राम स्वर्ण आभूषण धारण करने वाले प्रसिद्ध संत। यह रूप बाहरी दिखावे के लिए नहीं, बल्कि कठोर साधना और गुरु भक्ति का प्रतीक है। सनातन धर्म के प्रचार-प्रसार और शिक्षा के क्षेत्र में सक्रिय योगदान।",
-      originHi: "केरल",
-      memorial: true,
-      verified: true,
-      order: 2,
-    },
-    {
-      id: "saint-chinmayananda",
-      nameHi: "स्वामी चिन्मयानंद सरस्वती",
-      pad: "आचार्य",
-      bioHi:
-        "अद्वैत वेदांत के महान भाष्यकार; भगवद्गीता एवं उपनिषदों के प्रवचनों द्वारा सनातन ज्ञान का प्रचार-प्रसार।",
-      originHi: "केरल",
-      memorial: false,
-      verified: true,
-      order: 3,
-    },
-    {
-      id: "saint-narayana-guru",
-      nameHi: "श्री नारायण गुरु",
-      pad: "समाज सुधारक संत",
-      bioHi:
-        "एकम, समता और आत्म-गौरव के संदेश देने वाले महान संत; शिक्षा एवं सामाजिक समरसता के लिए अमर योगदान।",
-      originHi: "केरल",
-      memorial: false,
-      verified: true,
-      order: 4,
-    },
-  ];
-  for (const s of saints) {
-    await prisma.saint.upsert({ where: { id: s.id }, update: {}, create: s });
+  // ---------- Saints (verified directory + memorial + south masters) ----------
+  // Single source of truth: lib/data/sadhus.ts (every record has verified sources
+  // and a free-licensed photo). Re-seeding refreshes the content.
+  for (const s of SADHUS) {
+    const data = {
+      nameHi: s.nameHi,
+      pad: s.padHi,
+      bioHi: s.bioHi,
+      originHi: s.originHi,
+      memorial: s.memorial,
+      verified: s.verified,
+      order: s.order,
+    };
+    await prisma.saint.upsert({
+      where: { id: s.id },
+      update: data,
+      create: { id: s.id, ...data },
+    });
   }
+  // Remove Day-1 legacy/placeholder records (superseded by lib/data/sadhus.ts ids).
+  await prisma.saint.deleteMany({
+    where: {
+      id: {
+        in: [
+          "saint-mahamandaleshwar-1", // placeholder "... जी महाराज"
+          "saint-golden-baba", // old id (Golden Baba is saint-sk-narayan-giri now)
+          "saint-chinmayananda", // old id (now saint-chinmayananda-saraswati)
+        ],
+      },
+    },
+  });
 
   // ---------- Temples (nearby list, NAVIGATION §4 NearbyModal) ----------
   const temples = [
@@ -316,7 +299,7 @@ async function main() {
     }
   }
 
-  console.log("✅ Seed संपन्न: panchang(3), suvichar, saints(4), temples(3), kumbh(3), products(6), gita(18×1), forum Q&A, notifications(3), admin(1)");
+  console.log(`✅ Seed संपन्न: panchang(3), suvichar, saints(${SADHUS.length}), temples(3), kumbh(3), products(6), gita(18×1), forum Q&A, notifications(3), admin(1)`);
 }
 
 main()

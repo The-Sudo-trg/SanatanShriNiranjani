@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useModalStore } from "@/stores/modals";
-import { GOLDEN_BABA_PHOTO } from "@/lib/constants";
 import type { SaintRow, TempleRow } from "@/lib/content";
 
 // पास के मंदिर एवं अखाड़ा केंद्र (seeded Temple rows)
@@ -31,7 +30,7 @@ export function NearbyModal({ temples }: { temples: TempleRow[] }) {
             </div>
           ))}
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           बंद करें
         </Button>
       </DialogContent>
@@ -55,7 +54,7 @@ export function LiveDarshanModal() {
           </span>
         </div>
         <p className="text-[11px] text-gray-600">श्री पंचायती अखाड़ा निरंजनी मुख्य मंदिर से सीधा प्रसारण</p>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           बंद करें
         </Button>
       </DialogContent>
@@ -81,7 +80,7 @@ export function LiveGauModal() {
           </span>
         </div>
         <p className="text-[11px] text-gray-600">गौशाला प्रांगण से सीधा प्रसारण चल रहा है।</p>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           बंद करें
         </Button>
       </DialogContent>
@@ -93,7 +92,9 @@ export function LiveGauModal() {
 export function SouthSaintsModal({ saints }: { saints: SaintRow[] }) {
   const active = useModalStore((s) => s.active);
   const close = useModalStore((s) => s.close);
-  const southMasters = saints.filter((s) => !s.memorial && s.order >= 3);
+  // Verified records only (lib/data/sadhus.ts): Chinmayananda + Narayana Guru.
+  const southMasterIds = ["saint-chinmayananda-saraswati", "saint-narayana-guru"];
+  const southMasters = saints.filter((s) => southMasterIds.includes(s.id));
   return (
     <Dialog open={active === "SOUTH_SAINTS"} onOpenChange={(o) => !o && close()}>
       <DialogContent scrollable>
@@ -113,7 +114,7 @@ export function SouthSaintsModal({ saints }: { saints: SaintRow[] }) {
             </div>
           ))}
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           बंद करें
         </Button>
       </DialogContent>
@@ -121,20 +122,24 @@ export function SouthSaintsModal({ saints }: { saints: SaintRow[] }) {
   );
 }
 
-// गोल्डन बाबा जीवन गाथा — memorial stays solemn (DESIGN §8)
+// गोल्डन बाबा परिचय — श्रद्धेय, जीवित महामंडलेश्वर (कोई मुफ़्त-लाइसेंस चित्र नहीं है,
+// इसलिए कॉपीराइट-जोखिम वाले न्यूज़-हॉटलिंक के बजाय ॐ पदक प्रयोग किया गया है)
 export function GoldenBabaModal({ saints }: { saints: SaintRow[] }) {
   const active = useModalStore((s) => s.active);
   const close = useModalStore((s) => s.close);
-  const baba = saints.find((s) => s.memorial);
+  const baba =
+    saints.find((s) => s.id === "saint-sk-narayan-giri") ??
+    saints.find((s) => !s.memorial && s.pad.includes("महामंडलेश्वर"));
   return (
     <Dialog open={active === "GOLDEN_BABA"} onOpenChange={(o) => !o && close()}>
       <DialogContent scrollable>
         <div className="text-center">
-          <img
-            src={GOLDEN_BABA_PHOTO}
-            alt="ब्रह्मलीन श्री गोल्डन बाबा जी"
-            className="mx-auto mb-2 h-24 w-24 rounded-full border-4 border-gold object-cover shadow-md"
-          />
+          <div
+            aria-hidden
+            className="mx-auto mb-2 flex h-24 w-24 items-center justify-center rounded-full border-4 border-gold bg-gradient-to-br from-amber-100 to-orange-200 font-heading text-4xl text-maroonText shadow-md"
+          >
+            ॐ
+          </div>
           <DialogTitle className="text-sm font-bold text-maroonText">
             {baba?.nameHi ?? "महामंडलेश्वर एस.के. नारायण गिरि (गोल्डन बाबा)"}
           </DialogTitle>
@@ -154,7 +159,7 @@ export function GoldenBabaModal({ saints }: { saints: SaintRow[] }) {
             योगदान।
           </p>
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           बंद करें
         </Button>
       </DialogContent>
@@ -208,7 +213,7 @@ export function NotificationModal() {
             </div>
           ))}
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={close}>
+        <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={close}>
           ठीक है
         </Button>
       </DialogContent>

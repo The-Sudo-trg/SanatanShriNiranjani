@@ -9,6 +9,8 @@ import SouthSaintsButton from "@/components/home/SouthSaintsButton";
 import { SuvicharStrip } from "@/components/home/SuvicharStrip";
 import TempleCard from "@/components/site/TempleCard";
 import FavoriteButton from "@/components/site/FavoriteButton";
+import SadhuShowcase from "@/components/home/SadhuShowcase";
+import { SADHUS } from "@/lib/data/sadhus";
 import { prisma } from "@/lib/db";
 import { kolkataDayKey } from "@/lib/dates";
 import { formatDayKeyHi } from "@/lib/rotation";
@@ -50,7 +52,9 @@ export default async function HomePage() {
     prisma.panchang.findUnique({ where: { date: todayDate } }).catch(() => null) ??
       prisma.panchang.findFirst({ orderBy: { date: "desc" } }),
     prisma.suvichar.findFirst({ orderBy: { day: "asc" } }),
-    prisma.saint.findFirst({ where: { memorial: true } }),
+    // Golden Baba is a living Mahamandaleshwar — look him up by id (the old
+    // `memorial: true` lookup mixed him up with a different, deceased sadhu).
+    prisma.saint.findUnique({ where: { id: "saint-sk-narayan-giri" } }),
   ]);
 
   const wisdom = wisdomForDay(todayKey);
@@ -228,7 +232,10 @@ export default async function HomePage() {
           <h2 id="temple-heading" className="font-heading text-2xl font-bold text-charcoal">
             मन्दिर दर्शन — दिल्ली NCR
           </h2>
-          <Link href="/temples" className="text-xs font-bold text-saffron hover:underline">
+          <Link
+            href="/temples"
+            className="inline-flex min-h-11 items-center text-xs font-bold text-saffron hover:underline"
+          >
             पूरी सूची →
           </Link>
         </div>
@@ -238,6 +245,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* संत दर्शन — verified akhada/south-master lineage with scroll reveal */}
+      <SadhuShowcase saints={SADHUS} />
 
       {/* Explore by interest */}
       <section aria-labelledby="interests-heading" className="mb-10">
