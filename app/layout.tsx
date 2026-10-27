@@ -7,6 +7,7 @@ import SearchBar from "@/components/shell/SearchBar";
 import BottomNav from "@/components/shell/BottomNav";
 import ModalRoot from "@/components/shell/ModalRoot";
 import CartHydrator from "@/components/shell/CartHydrator";
+import { Analytics } from "@vercel/analytics/next";
 import { prisma } from "@/lib/db";
 import type { SaintRow, TempleRow } from "@/lib/content";
 import "./globals.css";
@@ -114,6 +115,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ModalRoot temples={templeRows} saints={saintRows} />
         <CartHydrator />
         <Toaster position="top-center" richColors />
+        <Analytics />
       </body>
     </html>
   );
