@@ -191,13 +191,20 @@ describe("POST /api/auth/register", () => {
     expect(row?.sadhuVerified).toBe(false);
   });
 
-  it("#4b refuses self-assignment of privileged roles (ADMIN / VOLUNTEER)", async () => {
-    for (const role of ["ADMIN", "VOLUNTEER"]) {
-      const res = await register({ email: `${role.toLowerCase()}@example.com`, role });
-      expect(res.status).toBe(400);
-      expect(((await res.json()) as ErrorBody).error).toContain("भूमिका");
-    }
+  it("#4b refuses self-assignment of the privileged ADMIN role", async () => {
+    const res = await register({ email: "admin@example.com", role: "ADMIN" });
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as ErrorBody).error).toContain("भूमिका");
     expect(await prisma.user.count()).toBe(0);
+  });
+
+  it("#4b2 registers a VOLUNTEER (स्वयंसेवक) account", async () => {
+    const res = await register({ email: "sevak@example.com", role: "VOLUNTEER" });
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as UserBody;
+    expect(body.user.role).toBe("VOLUNTEER");
+    const row = await prisma.user.findUnique({ where: { email: "sevak@example.com" } });
+    expect(row?.role).toBe("VOLUNTEER");
   });
 
   it("#4c stores an empty optional phone as NULL and rejects a bad phone in Hindi", async () => {

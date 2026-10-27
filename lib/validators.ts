@@ -102,9 +102,9 @@ export const cartRemoveSchema = z.object({ productId: z.string().min(1) });
 // Authentication (Day 1) — Hindi messages are contractual (AGENT.md §3)
 // ---------------------------------------------------------------------------
 
-// Self-registration may only ever create these roles. VOLUNTEER / ADMIN are
-// assigned by an administrator (never trusted from the request body).
-export const SELF_REGISTER_ROLES = ["USER", "SADHU"] as const;
+// Self-registration may only ever create these roles. ADMIN is assigned by an
+// administrator and is never trusted from the request body.
+export const SELF_REGISTER_ROLES = ["USER", "SADHU", "VOLUNTEER"] as const;
 
 const passwordSchema = z
   .string({ error: "कृपया पासवर्ड लिखें" })
