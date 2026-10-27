@@ -3,7 +3,7 @@ import { z } from "zod";
 // Hindi error messages are contractual (AGENT.md §3 Forms / PRD §6)
 
 const phoneSchema = z
-  .string()
+  .string({ error: "कृपया 10 अंकों का मोबाइल नंबर लिखें" })
   .trim()
   .regex(/^[6-9]\d{9}$/, "कृपया 10 अंकों का मोबाइल नंबर लिखें");
 
@@ -20,6 +20,18 @@ const dateStringSchema = z
   .string()
   .min(1, "कृपया दिनांक चुनें")
   .refine((v) => !Number.isNaN(new Date(v).getTime()), "कृपया सही दिनांक चुनें");
+
+const emailSchema = z
+  .string({ error: "कृपया ईमेल पता लिखें" })
+  .trim()
+  .toLowerCase()
+  .email("कृपया सही ईमेल पता लिखें");
+
+// Empty form fields arrive as "" — treat those as "not provided".
+const optionalPhoneSchema = z.preprocess(
+  (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+  phoneSchema.optional()
+);
 
 export const gadiPujaSchema = z.object({
   type: z.literal("GADI_PUJA"),
@@ -85,3 +97,69 @@ export const cartUpdateSchema = z.object({
   qty: z.number().int().min(0).max(99),
 });
 export const cartRemoveSchema = z.object({ productId: z.string().min(1) });
+
+// ---------------------------------------------------------------------------
+// Authentication (Day 1) — Hindi messages are contractual (AGENT.md §3)
+// ---------------------------------------------------------------------------
+
+// Self-registration may only ever create these roles. VOLUNTEER / ADMIN are
+// assigned by an administrator (never trusted from the request body).
+export const SELF_REGISTER_ROLES = ["USER", "SADHU"] as const;
+
+const passwordSchema = z
+  .string({ error: "कृपया पासवर्ड लिखें" })
+  .min(8, "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए")
+  .max(200, "पासवर्ड बहुत लंबा है");
+
+export const registerSchema = z.object({
+  name: z
+    .string({ error: "कृपया अपना नाम लिखें" })
+    .trim()
+    .min(2, "कृपया अपना नाम लिखें")
+    .max(80, "नाम बहुत लंबा है"),
+  email: emailSchema,
+  password: passwordSchema,
+  phone: optionalPhoneSchema,
+  role: z.enum(SELF_REGISTER_ROLES, "यह भूमिका स्वयं चुनना संभव नहीं है").optional().default("USER"),
+});
+
+export const loginSchema = z.object({
+  email: emailSchema,
+  // Do not reveal the registration password policy on login.
+  password: z
+    .string({ error: "कृपया पासवर्ड लिखें" })
+    .min(1, "कृपया पासवर्ड लिखें")
+    .max(200, "पासवर्ड बहुत लंबा है"),
+});
+
+// Day 8 pre-wiring: feedback rows can be written from the very first day.
+export const feedbackSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .max(80, "नाम बहुत लंबा है")
+    .optional()
+    .or(z.literal("")),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("कृपया सही ईमेल पता लिखें")
+    .optional()
+    .or(z.literal("")),
+  message: z
+    .string({ error: "कृपया अपना संदेश लिखें" })
+    .trim()
+    .min(5, "कृपया अपना संदेश विस्तार से लिखें")
+    .max(2000, "संदेश बहुत लंबा है"),
+  templeSlug: z
+    .string({ error: "मंदिर का नाम बहुत लंबा है" })
+    .trim()
+    .max(120, "मंदिर का नाम बहुत लंबा है")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+export type FeedbackInput = z.infer<typeof feedbackSchema>;
