@@ -178,3 +178,24 @@ P0 blocker / P1 major / P2 minor
 10. **Vercel build fails on Prisma** → missing `prisma generate` in build script; ensure `postinstall: prisma generate`.
 
 **Escalation order for ambiguity:** HTML prototype → NAVIGATION.md → PRD.md → open issue tagged `question`.
+
+## 14. Auth (Day 1 — `/api/auth/*`)
+
+Automated in `tests/unit/auth.test.ts` against a real throwaway SQLite DB (`prisma/test.db`); `npm run test` must stay green. Curl walkthrough in `worklog/2026-10-27-day1-auth-backend.md`.
+
+| TC | Case | Expected |
+|---|---|---|
+| TC-AT-01 | register valid भक्त | 201; DB row `role=USER`; scrypt `passwordHash`; session cookie (`HttpOnly`, `SameSite=Lax`, `Secure`, `Max-Age=604800`) |
+| TC-AT-02 | register duplicate email | 409 + Hindi "पहले से पंजीकृत" |
+| TC-AT-03 | register weak / missing password | 400 + Hindi; no user row created |
+| TC-AT-04 | register SADHU | `role=SADHU`, `sadhuVerified=false` |
+| TC-AT-04b | register with `role=ADMIN`/`VOLUNTEER` | 400 (self-assignment rejected) |
+| TC-AT-05 | login correct password | 200 + valid 7-day JWT session cookie |
+| TC-AT-06 | login wrong password | 401 generic Hindi "ईमेल या पासवर्ड गलत है।"; timing-safe; no crash |
+| TC-AT-07 | login unknown email | identical status + body to TC-AT-06 (no user enumeration) |
+| TC-AT-08 | `/api/auth/me` with cookie | 200 current user; never `passwordHash` |
+| TC-AT-09 | `/api/auth/me` without cookie | 401 |
+| TC-AT-10 | `/api/auth/me` tampered / expired JWT | 401 |
+| TC-AT-11 | `requireRole("ADMIN")` as USER | 403 (missing session → 401) |
+| TC-AT-12 | logout → `/api/auth/me` | cookie `Max-Age=0`; next call 401 |
+| TC-AT-13 | POST `/api/feedback` | 201 row (blank optionals → NULL); invalid → 400 Hindi |

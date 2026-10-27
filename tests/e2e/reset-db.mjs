@@ -13,6 +13,9 @@ export default async function resetDb() {
     await prisma.malaCount.deleteMany({});
     await prisma.volunteer.deleteMany({});
     await prisma.chatMessage.deleteMany({});
+    await prisma.feedback.deleteMany({});
+    // Keep the seed-created ADMIN (fixed id) — clear only accounts created by tests.
+    await prisma.user.deleteMany({ where: { id: { not: "seed-admin" } } });
     await prisma.notification.updateMany({ data: { read: false } });
     console.log("✅ E2E DB reset: user rows cleared, notifications marked unread");
   } finally {
