@@ -199,3 +199,23 @@ Automated in `tests/unit/auth.test.ts` against a real throwaway SQLite DB (`pris
 | TC-AT-11 | `requireRole("ADMIN")` as USER | 403 (missing session → 401) |
 | TC-AT-12 | logout → `/api/auth/me` | cookie `Max-Age=0`; next call 401 |
 | TC-AT-13 | POST `/api/feedback` | 201 row (blank optionals → NULL); invalid → 400 Hindi |
+
+## 15. Auth UI, language toggle & saint showcase (Day 2)
+
+Automated in `tests/e2e/auth.spec.ts` plus updated `flows.spec.ts` / `site.spec.ts`.
+
+| TC | Case | Expected |
+|---|---|---|
+| TC-AT-14 | `/register` empty/invalid submit | Hindi client errors, no request; role picker only भक्त/संत/स्वयंसेवक (no ADMIN) |
+| TC-AT-15 | register (भक्त) | 201 → `/profile` shows real name/email/role; session cookie set |
+| TC-AT-16 | register duplicate e-mail | server Hindi 409 alert, stays on `/register` |
+| TC-AT-17 | login wrong password | generic Hindi "ईमेल या पासवर्ड गलत है।", stays on `/login` |
+| TC-AT-18 | guest `/profile` | redirect → `/login?next=/profile` |
+| TC-AT-19 | logout → `/profile` | cookie cleared → redirect to login |
+| TC-AT-20 | header session state | logged-out: लॉग इन + पंजीकरण; logged-in: name/avatar + लॉग आउट |
+| TC-AT-21 | unsafe `?next=` | open redirect impossible; only same-origin relative paths honoured |
+| TC-LN-01 | language toggle | हिंदी default; toggle writes `sn_lang`, `<html lang>` switches, survives reload |
+| TC-LN-02 | localized chrome | nav/footer/bottom-nav/auth labels switch; sacred content stays Hindi |
+| TC-SD-01 | home saint showcase | verified cards with photo/credit/स्रोत; scroll-reveal; no placeholder names |
+| TC-SD-02 | saint data | living vs दिवंगत flags correct; memorial list matches verified data |
+| TC-SH-03 | hydration console | no app-caused hydration mismatch (extension-injected attrs suppressed) |
