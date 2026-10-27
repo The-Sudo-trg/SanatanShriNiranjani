@@ -68,6 +68,41 @@ production connects via the libSQL driver adapter). So:
 - Non-additive changes (rename/drop/type change) need an explicit migration + backup step —
   never add them silently to the sync script.
 
+## Live verification (after deploy)
+
+- Deploy of `80b82dd` triggered automatically; production recovered **within ~25 s**
+  of the poll starting.
+- Pages: `/` `/gau-seva` `/bookings` `/temples` `/store` `/menu` `/login` `/register`
+  `/daily-darshan` `/jigyasu` → **200**; `/profile` → 307 → `/login?next=/profile`
+  (correct guest behaviour).
+- APIs: `/api/panchang` `/api/gau-seva` `/api/bookings` `/api/notifications`
+  `/api/cart` → **200**; `/api/gau-seva` returns the contributions payload again.
+- Auth DB probe: `POST /api/auth/login` unknown e-mail → **401** with Hindi body;
+  `POST /api/auth/register` duplicate `admin@niranjani.local` → **409** Hindi body;
+  malformed JSON → **400** Hindi body (the first duplicate probe briefly returned
+  500 from a stale lambda still serving during the rollout, then stabilised).
+- Browser check (Playwright, production): all routes 200 with **0 console errors**
+  (CSP clean), screenshots `shots/prod-gau-seva-fixed.png`, `shots/prod-home-fixed.png`.
+- Existing data preserved (`/api/bookings` returns rows, `/api/gau-seva` returns
+  contributions).
+
+## Production ADMIN bootstrap (gap found during verification)
+
+- The hosted DB **does** now have the `User` table, and `admin@niranjani.local`
+  exists there — but it is **not an ADMIN** with the local dev password (most likely
+  it was registered through the new `/register` page before/during this check; the
+  role/credentials from a local `db:seed` never applied to Turso).
+- Added `scripts/ensure-admin.mjs` (+ `npm run db:ensure-admin`), opt-in via env so
+  it is safe:
+  - `ENSURE_ADMIN=1` + `SEED_ADMIN_EMAIL` + `SEED_ADMIN_PASSWORD` in the Vercel
+    environment → the **build** creates/promotes that account to ADMIN;
+  - `ENSURE_ADMIN_RESET_PASSWORD=1` additionally resets the password (first bootstrap
+    or rotation). Plaintext is never stored or logged.
+  - No-op when the variables are absent (local/CI builds unchanged).
+- Tested against a copy of the dev DB: skip path logs and exits 0; promote+reset
+  makes the account ADMIN and the new password verifies via `lib/auth.verifyPassword`
+  while the old one fails; create path inserts an ADMIN with an scrypt hash.
+
 ## Follow-ups
 
 - `Order.updatedAt` is added with a constant default (`0`) because SQLite cannot `ALTER ADD`
@@ -75,3 +110,4 @@ production connects via the libSQL driver adapter). So:
   backfilled, and `prisma db push` accepts the result as in sync.
 - Consider a `/api/health` endpoint that checks schema presence so drift is caught by uptime
   monitoring instead of user reports.
+- Remove `ENSURE_ADMIN` from Vercel after the production ADMIN is bootstrapped.
