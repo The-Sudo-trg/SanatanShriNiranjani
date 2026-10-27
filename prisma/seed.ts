@@ -1,5 +1,8 @@
 // Seed = product content (AGENT.md §8: never "clean" this data). Idempotent via explicit ids / upserts.
+import { randomBytes } from "node:crypto";
+
 import { createPrismaClient } from "../lib/prisma-create";
+import { hashPassword } from "../lib/auth";
 
 const prisma = createPrismaClient();
 
@@ -47,10 +50,14 @@ async function main() {
   ];
   for (let i = 0; i < panchangRows.length; i++) {
     const row = panchangRows[i];
+    // Upsert by the stable seeded id — NOT by the rolling date. The ids are
+    // persisted across runs while the date moves daily, so a date-keyed upsert
+    // hit the fixed `id` unique constraint on every day after the first seed.
+    const date = new Date(`${kolkataDateKey(i)}T00:00:00.000Z`);
     await prisma.panchang.upsert({
-      where: { date: new Date(`${kolkataDateKey(i)}T00:00:00.000Z`) },
-      update: { ...row },
-      create: { ...row, date: new Date(`${kolkataDateKey(i)}T00:00:00.000Z`) },
+      where: { id: row.id },
+      update: { ...row, date },
+      create: { ...row, date },
     });
   }
 
@@ -271,7 +278,45 @@ async function main() {
     });
   }
 
-  console.log("✅ Seed संपन्न: panchang(3), suvichar, saints(4), temples(3), kumbh(3), products(6), gita(18×1), forum Q&A, notifications(3)");
+  // ---------- ADMIN user (Day 1 auth foundation) ----------
+  // No working default password is committed (AGENT.md §2.9). Set
+  // SEED_ADMIN_PASSWORD, or a strong random password is generated and printed ONCE.
+  // Only the scrypt hash is stored. The seed uses a fixed id and NEVER promotes an
+  // existing account, so a user who registered the seed e-mail first cannot be
+  // silently upgraded to ADMIN.
+  const adminEmail = (process.env.SEED_ADMIN_EMAIL ?? "admin@niranjani.local").trim().toLowerCase();
+  const configuredPassword = process.env.SEED_ADMIN_PASSWORD;
+  const existingAdmin = await prisma.user.findUnique({ where: { id: "seed-admin" } });
+  if (!existingAdmin) {
+    const emailOwner = await prisma.user.findUnique({ where: { email: adminEmail } });
+    if (emailOwner) {
+      console.warn(
+        `⚠️ ADMIN seed skipped: ${adminEmail} already belongs to an existing account (never auto-promoted).`
+      );
+    } else {
+      const adminPassword = configuredPassword ?? randomBytes(24).toString("base64url");
+      await prisma.user.create({
+        data: {
+          id: "seed-admin",
+          name: "प्रबंधक (ADMIN)",
+          email: adminEmail,
+          passwordHash: await hashPassword(adminPassword),
+          role: "ADMIN",
+          sadhuVerified: true,
+        },
+      });
+      if (configuredPassword) {
+        console.log(`✅ ADMIN seeded: ${adminEmail} (password taken from SEED_ADMIN_PASSWORD)`);
+      } else {
+        // Printed once — the plaintext is never persisted anywhere.
+        console.log(
+          `🔑 ADMIN seeded: ${adminEmail} — generated password (save it, shown only once): ${adminPassword}`
+        );
+      }
+    }
+  }
+
+  console.log("✅ Seed संपन्न: panchang(3), suvichar, saints(4), temples(3), kumbh(3), products(6), gita(18×1), forum Q&A, notifications(3), admin(1)");
 }
 
 main()

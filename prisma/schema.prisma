@@ -39,6 +39,9 @@ model Booking {
   amount     Int?
   status     String   @default("PENDING")
   createdAt  DateTime @default(now())
+  userId     String?
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model GauContribution {
@@ -49,6 +52,9 @@ model GauContribution {
   amount        Int
   certificateNo String?
   createdAt     DateTime @default(now())
+  userId        String?
+
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model MalaCount {
@@ -119,6 +125,12 @@ model Order {
   status    String   @default("PENDING")
   lines     Json
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  userId    String?
+
+  events    OrderEvent[]
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model Saint {
@@ -162,4 +174,37 @@ model KumbhEvent {
   date    DateTime
   kind    String // SHAHI_SNAN | OTHER
   noteHi  String?
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  phone         String?
+  passwordHash  String
+  role          String   @default("USER") // SQLite has no enums: USER | SADHU | VOLUNTEER | ADMIN (validated in lib/auth.ts)
+  sadhuVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  orders           Order[]
+  gauContributions GauContribution[]
+  bookings         Booking[]
+}
+
+model OrderEvent {
+  id      String   @id @default(cuid())
+  orderId String
+  status  String
+  note    String?
+  at      DateTime @default(now())
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  name       String?
+  email      String?
+  message    String
+  templeSlug String?
+  createdAt  DateTime @default(now())
 }
