@@ -1,47 +1,52 @@
 import Link from "next/link";
+
 import { APP_NAME, APP_SUBTITLE } from "@/lib/constants";
+import { t, type Locale, type MessageKey } from "@/lib/i18n";
 
 // Footer v2 (brief §4.7) — charcoal band, four link columns, legal row.
-const COLS: Array<{ title: string; links: Array<{ href: string; label: string }> }> = [
+// Labels come from the locale cookie (Hindi default, English toggle).
+type FooterLink = { href: string; key: MessageKey };
+
+const COLS: ReadonlyArray<{ titleKey: MessageKey; links: FooterLink[] }> = [
   {
-    title: "दैनिक साधना",
+    titleKey: "footer.col.daily",
     links: [
-      { href: "/daily-darshan", label: "दैनिक दर्शन" },
-      { href: "/mantras", label: "मंत्र एवं स्तोत्र" },
-      { href: "/festivals", label: "पर्व एवं कैलेण्डर" },
-      { href: "/granth", label: "ग्रंथ (गीता, जप माला)" },
+      { href: "/daily-darshan", key: "footer.daily.darshan" },
+      { href: "/mantras", key: "footer.daily.mantras" },
+      { href: "/festivals", key: "footer.daily.festivals" },
+      { href: "/granth", key: "footer.daily.granth" },
     ],
   },
   {
-    title: "मंदिर दर्शन",
+    titleKey: "footer.col.temples",
     links: [
-      { href: "/temples", label: "मंदिर सूची (दिल्ली NCR)" },
-      { href: "/temples?category=SHAIVA", label: "शिव मंदिर" },
-      { href: "/temples?category=SHAKTA", label: "देवी मंदिर" },
-      { href: "/temples?category=VAISHNAVA", label: "विष्णु / कृष्ण मंदिर" },
+      { href: "/temples", key: "footer.temples.list" },
+      { href: "/temples?category=SHAIVA", key: "footer.temples.shaiva" },
+      { href: "/temples?category=SHAKTA", key: "footer.temples.shakta" },
+      { href: "/temples?category=VAISHNAVA", key: "footer.temples.vaishnava" },
     ],
   },
   {
-    title: "अखाड़ा सेवाएँ",
+    titleKey: "footer.col.services",
     links: [
-      { href: "/gau-seva", label: "गौ सेवा एवं वृक्षारोपण" },
-      { href: "/bookings", label: "पूजा बुकिंग" },
-      { href: "/store", label: "पूजा स्टोर" },
-      { href: "/kumbh-2027", label: "महाकुम्भ 2027" },
+      { href: "/gau-seva", key: "footer.services.gau" },
+      { href: "/bookings", key: "footer.services.bookings" },
+      { href: "/store", key: "footer.services.store" },
+      { href: "/kumbh-2027", key: "footer.services.kumbh" },
     ],
   },
   {
-    title: "जानकारी",
+    titleKey: "footer.col.info",
     links: [
-      { href: "/about", label: "परिचय" },
-      { href: "/content-sources", label: "स्रोत एवं सुधार" },
-      { href: "/privacy", label: "गोपनीयता नीति" },
-      { href: "/terms", label: "उपयोग की शर्तें" },
+      { href: "/about", key: "footer.info.about" },
+      { href: "/content-sources", key: "footer.info.sources" },
+      { href: "/privacy", key: "footer.info.privacy" },
+      { href: "/terms", key: "footer.info.terms" },
     ],
   },
 ];
 
-export default function Footer() {
+export default function Footer({ locale }: { locale: Locale }) {
   return (
     <footer className="mt-12 bg-footerBg text-gray-300">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
@@ -59,22 +64,22 @@ export default function Footer() {
                 <span className="text-[10px] tracking-wider text-gray-400">{APP_SUBTITLE}</span>
               </span>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-gray-400">
-              सनातन धर्म का डिजिटल द्वार — दैनिक दर्शन, सत्यापित मंदिर सूचना, मंत्र, पर्व-मार्गदर्शिका
-              और श्रद्धा की सेवाएँ। आपकी प्राथमिकताएँ आपके उपकरण पर ही रहती हैं।
-            </p>
+            <p className="mt-3 text-xs leading-relaxed text-gray-400">{t(locale, "footer.blurb")}</p>
           </div>
           {COLS.map((col) => (
-            <nav key={col.title} aria-label={col.title}>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">{col.title}</h3>
-              <ul className="mt-3 space-y-2">
+            <nav key={col.titleKey} aria-label={t(locale, col.titleKey)}>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                {t(locale, col.titleKey)}
+              </h3>
+              <ul className="mt-3 space-y-1">
                 {col.links.map((l) => (
-                  <li key={l.href + l.label}>
+                  <li key={l.href + l.key}>
                     <Link
                       href={l.href}
-                      className="text-xs text-gray-300 transition hover:text-saffronSoft"
+                      suppressHydrationWarning
+                      className="-mx-2 flex min-h-9 items-center rounded-lg px-2 text-xs text-gray-300 transition hover:bg-white/5 hover:text-saffronSoft"
                     >
-                      {l.label}
+                      {t(locale, l.key)}
                     </Link>
                   </li>
                 ))}
@@ -83,13 +88,14 @@ export default function Footer() {
           ))}
         </div>
         <div className="mt-8 flex flex-col gap-2 border-t border-gray-700 pt-4 text-[11px] text-gray-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {APP_NAME} — श्रद्धा एवं सेवा-भाव से।</p>
           <p>
-            तिथियों और मंदिर-सूचना के स्रोत दिए गए हैं; कोई गलती मिले तो{" "}
+            © {new Date().getFullYear()} {APP_NAME} — {t(locale, "footer.copyright")}
+          </p>
+          <p>
+            {t(locale, "footer.correction")}{" "}
             <Link href="/content-sources" className="underline hover:text-saffronSoft">
-              सुधार सुझाएँ
+              {t(locale, "footer.correctionLink")}
             </Link>
-            ।
           </p>
         </div>
       </div>

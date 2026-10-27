@@ -122,13 +122,13 @@ export function AiChatModal() {
             void send();
           }}
         >
-          <Input
+          <Input suppressHydrationWarning
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="अपना प्रश्न यहाँ पूछें..."
             aria-label="अपना प्रश्न लिखें"
           />
-          <Button
+          <Button suppressHydrationWarning
             type="submit"
             variant="indigo"
             aria-label="प्रश्न भेजें"

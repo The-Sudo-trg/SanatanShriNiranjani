@@ -4,6 +4,10 @@ import withPWA from "next-pwa";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // The Next.js dev overlay badge (bottom-left circle) looks like a chat/support
+  // widget and overlaps the fixed mobile bottom nav → disabled (dev-only; the
+  // production build has no indicator anyway).
+  devIndicators: false,
   // pin the tracing root to this repo (silences package-lock-in-parent-dir warning)
   outputFileTracingRoot: path.join(import.meta.dirname, "."),
   // ADR-002 (Turso): adapter-libsql does a dynamic `require.context(".")` over the

@@ -28,7 +28,7 @@ export default function FavoriteButton({
   const saved = hydrated && isSaved(items, kind, slug);
 
   return (
-    <button
+    <button suppressHydrationWarning
       type="button"
       aria-pressed={saved}
       aria-label={saved ? `सेव से हटाएँ: ${titleHi}` : `${label}: ${titleHi}`}

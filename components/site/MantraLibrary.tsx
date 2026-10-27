@@ -78,7 +78,7 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        <button
+        <button suppressHydrationWarning
           type="button"
           onClick={copy}
           aria-label="मंत्र कॉपी करें"
@@ -87,7 +87,7 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
           {copied ? <Check className="h-3.5 w-3.5 text-success" aria-hidden /> : <Copy className="h-3.5 w-3.5" aria-hidden />}
           कॉपी
         </button>
-        <button
+        <button suppressHydrationWarning
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
@@ -140,7 +140,7 @@ export default function MantraLibrary() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
-          <input
+          <input suppressHydrationWarning
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -162,7 +162,7 @@ export default function MantraLibrary() {
           ))}
         </select>
         <div className="flex items-center gap-1.5" role="group" aria-label="पाठ आकार">
-          <button
+          <button suppressHydrationWarning
             type="button"
             onClick={() => setTextPx((p) => Math.max(16, p - 2))}
             aria-label="पाठ छोटा करें"
@@ -170,7 +170,7 @@ export default function MantraLibrary() {
           >
             <ZoomOut className="h-4 w-4" aria-hidden />
           </button>
-          <button
+          <button suppressHydrationWarning
             type="button"
             onClick={() => setTextPx((p) => Math.min(34, p + 2))}
             aria-label="पाठ बड़ा करें"

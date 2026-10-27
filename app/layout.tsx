@@ -9,6 +9,8 @@ import ModalRoot from "@/components/shell/ModalRoot";
 import CartHydrator from "@/components/shell/CartHydrator";
 import { Analytics } from "@vercel/analytics/next";
 import { prisma } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
+import { getLocale } from "@/lib/i18n-server";
 import type { SaintRow, TempleRow } from "@/lib/content";
 import "./globals.css";
 
@@ -65,16 +67,22 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// ---------- Site shell v2 (brief Phase 4) -----------------------------------
-// Normal document-flow website: sticky cream header, fluid content column,
-// charcoal footer; mobile keeps the fixed 5-tab bar. Modals/toasts are Radix
-// portals (body-level, fixed) so the app-window removal is transparent to them.
+// ---------- Site shell v3 (Day 1 auth + language) ----------------------------
+// Dynamic shell: the language cookie (Hindi default, English toggle) and the
+// session cookie are read per request so the header/footer/nav render in the
+// chosen locale and the correct auth state (लॉग इन / प्रोफ़ाइल + लॉग आउट) without
+// a flash. Content pages remain thin and re-render per request on top of this.
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [temples, saints] = await Promise.all([
+  const [locale, user, temples, saints] = await Promise.all([
+    getLocale(),
+    getSessionUser(),
     prisma.temple.findMany(),
     prisma.saint.findMany({ orderBy: { order: "asc" } }),
   ]);
+  const headerUser = user
+    ? { id: user.id, name: user.name, email: user.email, role: user.role }
+    : null;
   const templeRows: TempleRow[] = temples.map((t) => ({
     id: t.id,
     nameHi: t.nameHi,
@@ -94,7 +102,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html
-      lang="hi"
+      lang={locale}
       className={`${devanagari.variable} ${inter.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >
@@ -103,19 +111,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-saffron focus:px-4 focus:py-2 focus:text-white"
         >
-          मुख्य सामग्री पर जाएँ
+          {locale === "hi" ? "मुख्य सामग्री पर जाएँ" : "Skip to main content"}
         </a>
-        <Header />
-        <SearchBar />
+        <Header locale={locale} user={headerUser} />
+        <SearchBar locale={locale} />
         <main id="main-content" className="pb-24 lg:pb-0">
           {children}
         </main>
-        <Footer />
-        <BottomNav />
+        <Footer locale={locale} />
+        <BottomNav locale={locale} />
         <ModalRoot temples={templeRows} saints={saintRows} />
         <CartHydrator />
         <Toaster position="top-center" richColors />
-        <Analytics />
+        {/* Vercel Analytics loads from va.vercel-scripts.com in dev, which the CSP
+            intentionally does not allow (no third-party scripts). Production uses
+            the first-party /_vercel/insights script, so only mount it there. */}
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );

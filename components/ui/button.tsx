@@ -36,7 +36,18 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        // Password-manager / form-filler browser extensions inject attributes
+        // (e.g. `fdprocessedid`) into buttons before React hydrates. This is a
+        // DOM-only escape hatch for that third-party attribute — it does not
+        // affect behaviour or state.
+        suppressHydrationWarning
+        {...props}
+      />
+    );
   }
 );
 Button.displayName = "Button";

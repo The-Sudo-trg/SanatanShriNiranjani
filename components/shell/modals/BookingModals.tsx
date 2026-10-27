@@ -79,20 +79,20 @@ export function GadiPujaModal() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
           <div>
             <Label htmlFor="gadi-name">वाहन स्वामी का नाम</Label>
-            <Input id="gadi-name" placeholder="वाहन स्वामी का नाम" {...register("personName")} />
+            <Input suppressHydrationWarning id="gadi-name" placeholder="वाहन स्वामी का नाम" {...register("personName")} />
             <FieldError message={errors.personName?.message} />
           </div>
           <div>
             <Label htmlFor="gadi-no">गाड़ी नंबर</Label>
-            <Input id="gadi-no" placeholder="गाड़ी नंबर (जैसे UP-16-XX-0000)" {...register("vehicleNo")} />
+            <Input suppressHydrationWarning id="gadi-no" placeholder="गाड़ी नंबर (जैसे UP-16-XX-0000)" {...register("vehicleNo")} />
             <FieldError message={errors.vehicleNo?.message} />
           </div>
           <div>
             <Label htmlFor="gadi-date">दिनांक</Label>
-            <Input id="gadi-date" type="date" {...register("date")} />
+            <Input suppressHydrationWarning id="gadi-date" type="date" {...register("date")} />
             <FieldError message={errors.date?.message} />
           </div>
-          <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
+          <Button suppressHydrationWarning type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "भेजा जा रहा है…" : `पूजन बुक करें (₹${PRICES.GADI_PUJA})`}
           </Button>
         </form>
@@ -134,15 +134,15 @@ export function NamkaranModal() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
           <div>
             <Label htmlFor="namkaran-name">माता/पिता का नाम</Label>
-            <Input id="namkaran-name" placeholder="माता/पिता का नाम" {...register("personName")} />
+            <Input suppressHydrationWarning id="namkaran-name" placeholder="माता/पिता का नाम" {...register("personName")} />
             <FieldError message={errors.personName?.message} />
           </div>
           <div>
             <Label htmlFor="namkaran-date">दिनांक</Label>
-            <Input id="namkaran-date" type="date" {...register("date")} />
+            <Input suppressHydrationWarning id="namkaran-date" type="date" {...register("date")} />
             <FieldError message={errors.date?.message} />
           </div>
-          <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
+          <Button suppressHydrationWarning type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "भेजा जा रहा है…" : "संस्कार बुकिंग भेजें"}
           </Button>
         </form>
@@ -183,20 +183,20 @@ export function SantBookingModal() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
           <div>
             <Label htmlFor="sant-name">आपका नाम</Label>
-            <Input id="sant-name" placeholder="आपका नाम" {...register("personName")} />
+            <Input suppressHydrationWarning id="sant-name" placeholder="आपका नाम" {...register("personName")} />
             <FieldError message={errors.personName?.message} />
           </div>
           <div>
             <Label htmlFor="sant-phone">मोबाइल नंबर</Label>
-            <Input id="sant-phone" type="tel" inputMode="numeric" placeholder="10 अंकों का मोबाइल नंबर" {...register("phone")} />
+            <Input suppressHydrationWarning id="sant-phone" type="tel" inputMode="numeric" placeholder="10 अंकों का मोबाइल नंबर" {...register("phone")} />
             <FieldError message={errors.phone?.message} />
           </div>
           <div>
             <Label htmlFor="sant-date">दिनांक</Label>
-            <Input id="sant-date" type="date" {...register("date")} />
+            <Input suppressHydrationWarning id="sant-date" type="date" {...register("date")} />
             <FieldError message={errors.date?.message} />
           </div>
-          <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
+          <Button suppressHydrationWarning type="submit" variant="primary" size="lg" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "भेजा जा रहा है…" : "बुकिंग अनुरोध भेजें"}
           </Button>
         </form>
@@ -238,15 +238,15 @@ export function VolunteerModal() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
           <div>
             <Label htmlFor="vol-name">आपका पूरा नाम</Label>
-            <Input id="vol-name" placeholder="आपका पूरा नाम" {...register("name")} />
+            <Input suppressHydrationWarning id="vol-name" placeholder="आपका पूरा नाम" {...register("name")} />
             <FieldError message={errors.name?.message} />
           </div>
           <div>
             <Label htmlFor="vol-wa">मोबाइल नंबर (WhatsApp)</Label>
-            <Input id="vol-wa" type="tel" inputMode="numeric" placeholder="10 अंकों का WhatsApp नंबर" {...register("whatsapp")} />
+            <Input suppressHydrationWarning id="vol-wa" type="tel" inputMode="numeric" placeholder="10 अंकों का WhatsApp नंबर" {...register("whatsapp")} />
             <FieldError message={errors.whatsapp?.message} />
           </div>
-          <Button type="submit" variant="indigo" size="lg" className="w-full" disabled={isSubmitting}>
+          <Button suppressHydrationWarning type="submit" variant="indigo" size="lg" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "भेजा जा रहा है…" : "सेवा दल पास प्राप्त करें"}
           </Button>
         </form>

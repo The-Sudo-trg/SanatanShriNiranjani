@@ -72,7 +72,7 @@ export default function SiteSearch() {
     <div className="space-y-4">
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" aria-hidden />
-        <input
+        <input suppressHydrationWarning
           ref={inputRef}
           type="search"
           autoFocus
@@ -88,7 +88,7 @@ export default function SiteSearch() {
           className="w-full rounded-2xl border border-warmBorder bg-surface py-3.5 pl-12 pr-12 text-base text-charcoal shadow-sm placeholder:text-muted focus:border-saffron focus:outline-none"
         />
         {query && (
-          <button
+          <button suppressHydrationWarning
             type="button"
             onClick={() => {
               setQuery("");

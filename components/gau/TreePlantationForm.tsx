@@ -60,7 +60,7 @@ export default function TreePlantationForm() {
       >
         <div>
           <Label htmlFor="tree-donor">प्रियजन का नाम लिखें:</Label>
-          <Input
+          <Input suppressHydrationWarning
             id="tree-donor"
             value={donorName}
             onChange={(e) => setDonorName(e.target.value)}

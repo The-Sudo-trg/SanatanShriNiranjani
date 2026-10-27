@@ -81,7 +81,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
             अखाड़े द्वारा प्रमाणित रुद्राक्ष, गंगा जल, हवन सामग्री सीधे घर मंगाएं।
           </p>
         </div>
-        <button
+        <button suppressHydrationWarning
           type="button"
           onClick={() => setCartOpen(true)}
           aria-label="कार्ट खोलें"
@@ -119,7 +119,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
                 <p className="mt-1 text-[11px] font-bold text-saffron">₹{p.price}</p>
                 {p.unit && <p className="text-[10px] text-gray-500">{p.unit}</p>}
               </div>
-              <Button
+              <Button suppressHydrationWarning
                 variant="primary"
                 className="mt-3 w-full py-1.5 text-[11px]"
                 onClick={() => void onAdd(p.id, p.nameHi)}
@@ -151,7 +151,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <button
+                    <button suppressHydrationWarning
                       type="button"
                       aria-label="मात्रा घटाएँ"
                       onClick={() => void setQty(item.productId, item.qty - 1)}
@@ -160,7 +160,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
                       <Minus className="h-3 w-3" aria-hidden />
                     </button>
                     <span className="w-5 text-center text-xs font-bold tabular-nums">{item.qty}</span>
-                    <button
+                    <button suppressHydrationWarning
                       type="button"
                       aria-label="मात्रा बढ़ाएँ"
                       onClick={() => void setQty(item.productId, item.qty + 1)}
@@ -168,7 +168,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
                     >
                       <Plus className="h-3 w-3" aria-hidden />
                     </button>
-                    <button
+                    <button suppressHydrationWarning
                       type="button"
                       aria-label="कार्ट से हटाएँ"
                       onClick={() => void remove(item.productId)}
@@ -183,7 +183,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
                 <span>कुल राशि</span>
                 <span className="text-saffron">₹{total}</span>
               </div>
-              <Button
+              <Button suppressHydrationWarning
                 variant="primary"
                 size="lg"
                 className="w-full"
@@ -205,20 +205,20 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
             भुगतान प्रणाली शीघ्र — वर्तमान में ऑर्डर केवल दर्ज किया जाता है। (मॉक)
           </p>
           <form onSubmit={onCheckout} className="space-y-3" noValidate>
-            <Input
+            <Input suppressHydrationWarning
               value={buyerName}
               onChange={(e) => setBuyerName(e.target.value)}
               placeholder="आपका नाम"
               aria-label="आपका नाम"
             />
-            <Input
+            <Input suppressHydrationWarning
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="मोबाइल नंबर (10 अंक)"
               aria-label="मोबाइल नंबर"
               inputMode="numeric"
             />
-            <Button type="submit" variant="primary" size="lg" className="w-full" disabled={ordering}>
+            <Button suppressHydrationWarning type="submit" variant="primary" size="lg" className="w-full" disabled={ordering}>
               {ordering ? "ऑर्डर दर्ज हो रहा है…" : `ऑर्डर पुष्ट करें (₹${total})`}
             </Button>
           </form>
@@ -233,7 +233,7 @@ export default function StoreClient({ products }: { products: ProductRow[] }) {
             आपका ऑर्डर <strong>#{orderDone?.id.slice(-6).toUpperCase()}</strong> (₹{orderDone?.total})
             दर्ज हो गया है। अखाड़ा सेवा दल शीघ्र संपर्क करेगा। धन्यवाद!
           </p>
-          <Button variant="primary" size="lg" className="w-full" onClick={() => setOrderDone(null)}>
+          <Button suppressHydrationWarning variant="primary" size="lg" className="w-full" onClick={() => setOrderDone(null)}>
             ठीक है
           </Button>
         </DialogContent>

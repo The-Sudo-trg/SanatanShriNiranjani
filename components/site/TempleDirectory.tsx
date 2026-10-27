@@ -73,7 +73,7 @@ export default function TempleDirectory({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
-          <input
+          <input suppressHydrationWarning
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -82,7 +82,7 @@ export default function TempleDirectory({
             className="w-full rounded-full border border-warmBorder bg-surface py-2.5 pl-9 pr-9 text-sm text-charcoal placeholder:text-muted focus:border-saffron focus:outline-none"
           />
           {query && (
-            <button
+            <button suppressHydrationWarning
               type="button"
               onClick={() => setQuery("")}
               aria-label="खोज साफ़ करें"
@@ -117,7 +117,7 @@ export default function TempleDirectory({
           </option>
         </select>
         {distances === null && (
-          <button
+          <button suppressHydrationWarning
             type="button"
             onClick={locate}
             disabled={geoState === "asking"}

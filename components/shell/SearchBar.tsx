@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { MapPin, Search } from "lucide-react";
 import { useModalStore } from "@/stores/modals";
 import { matchSearchKeyword } from "@/lib/search";
+import { t, type Locale } from "@/lib/i18n";
 
 // NAVIGATION §5 — keyword routing: Enter + debounce(300ms), first match wins, clear-on-open,
 // no match → silent. Extended page keywords (§5 note): कुंभ/गौ/गीता/स्टोर.
@@ -15,7 +16,7 @@ const PAGE_ROUTES: Array<{ pattern: RegExp; path: string }> = [
   { pattern: /स्टोर|पूजा सामग्री/, path: "/store" },
 ];
 
-export default function SearchBar() {
+export default function SearchBar({ locale }: { locale: Locale }) {
   const [value, setValue] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openModal = useModalStore((s) => s.open);
@@ -47,7 +48,10 @@ export default function SearchBar() {
   return (
     <div className="flex items-center gap-2 border-b border-warmBorder bg-cream px-4 py-2">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" aria-hidden />
+        <Search
+          className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
+          aria-hidden
+        />
         <input
           type="text"
           value={value}
@@ -55,8 +59,8 @@ export default function SearchBar() {
           onKeyDown={(e) => {
             if (e.key === "Enter") evaluate(value);
           }}
-          placeholder="मंदिर, संत, गाड़ी पूजन या नाम से खोजें..."
-          aria-label="खोजें"
+          placeholder={t(locale, "search.placeholder")}
+          aria-label={t(locale, "search.label")}
           suppressHydrationWarning
           className="w-full rounded-full border border-warmBorder bg-surface py-2 pl-9 pr-4 text-xs shadow-sm focus:outline-none focus:ring-2 focus:ring-saffron"
         />
@@ -65,10 +69,10 @@ export default function SearchBar() {
         type="button"
         onClick={() => openModal("NEARBY")}
         suppressHydrationWarning
-        className="whitespace-nowrap rounded-full bg-saffron px-3 py-2 text-xs font-medium text-white shadow transition hover:bg-saffronDeep"
+        className="whitespace-nowrap rounded-full bg-saffron px-3 py-2 text-xs font-medium text-white shadow transition hover:bg-saffronDeep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-charcoal"
       >
         <MapPin className="mr-1 inline h-3 w-3" aria-hidden />
-        पास के मंदिर
+        {t(locale, "search.nearby")}
       </button>
     </div>
   );

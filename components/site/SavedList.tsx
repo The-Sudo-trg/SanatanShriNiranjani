@@ -48,7 +48,7 @@ export default function SavedList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted">{items.length} चीज़ें सेव हैं</p>
-        <button
+        <button suppressHydrationWarning
           type="button"
           onClick={() => {
             if (confirm("सभी सेव किया हुआ हटाएँ? यह पूरी सूची मिटा देगा।")) clearAll();
@@ -73,7 +73,7 @@ export default function SavedList() {
                 {item.titleHi}
               </Link>
             </div>
-            <button
+            <button suppressHydrationWarning
               type="button"
               onClick={() => remove(item.kind, item.slug)}
               aria-label={`हटाएँ: ${item.titleHi}`}
