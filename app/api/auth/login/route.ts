@@ -41,6 +41,11 @@ export async function POST(req: Request) {
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) return jsonError(INVALID_CREDENTIALS, 401);
 
-  const response = jsonNoStore({ message: "लॉग इन सफल हुआ।", user: toPublicUser(user) });
-  return setSessionCookie(response, createSessionToken(user));
+  // Same contract as register — token signing failures must be a typed JSON 500.
+  try {
+    const response = jsonNoStore({ message: "लॉग इन सफल हुआ।", user: toPublicUser(user) });
+    return setSessionCookie(response, createSessionToken(user));
+  } catch {
+    return jsonError("लॉग इन सही नहीं हो पाया, कृपया पुनः प्रयास करें।", 500);
+  }
 }

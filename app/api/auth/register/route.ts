@@ -43,9 +43,15 @@ export async function POST(req: Request) {
     return jsonError("पंजीकरण में त्रुटि हुई, कृपया पुनः प्रयास करें।", 500);
   }
 
-  const response = jsonNoStore(
-    { message: "पंजीकरण सफल हुआ।", user: toPublicUser(user) },
-    { status: 201 }
-  );
-  return setSessionCookie(response, createSessionToken(user));
+  // Token signing needs AUTH_SECRET — a config failure here must surface as a
+  // typed JSON 500 (Hindi), never as an unhandled empty-body crash.
+  try {
+    const response = jsonNoStore(
+      { message: "पंजीकरण सफल हुआ।", user: toPublicUser(user) },
+      { status: 201 }
+    );
+    return setSessionCookie(response, createSessionToken(user));
+  } catch {
+    return jsonError("पंजीकरण सही नहीं हो पाया, कृपया एक बार लॉग इन करके देखें।", 500);
+  }
 }
