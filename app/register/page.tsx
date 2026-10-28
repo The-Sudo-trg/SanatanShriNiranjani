@@ -5,6 +5,7 @@ import RegisterForm from "@/components/auth/RegisterForm";
 import { getSessionUser } from "@/lib/auth";
 import { t } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n-server";
+import { safeNextPath } from "@/lib/next-path";
 
 // Session-aware page: always rendered per-request so an authenticated visitor is
 // redirected instead of being served a cached logged-out form.
@@ -17,29 +18,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/register" },
 };
 
-const MAX_NEXT_LENGTH = 512;
-
-/**
- * Open-redirect guard (shared contract with /login): after a successful
- * registration we only ever navigate to a same-origin relative path.
- */
-function safeNextPath(value: string | string[] | undefined): string | undefined {
-  const raw = Array.isArray(value) ? value[0] : value;
-  if (!raw) return undefined;
-  if (raw.length > MAX_NEXT_LENGTH) return undefined;
-  if (!raw.startsWith("/") || raw.startsWith("//")) return undefined;
-  if (raw.includes("\\")) return undefined;
-  if (/[\u0000-\u001f\u007f]/.test(raw)) return undefined;
-  if (/^\/%2f|^\/%5c/i.test(raw)) return undefined;
-  if (
-    raw === "/register" ||
-    raw.startsWith("/register?") ||
-    raw.startsWith("/register/")
-  ) {
-    return undefined;
-  }
-  return raw;
-}
 
 export default async function RegisterPage({
   searchParams,
@@ -50,7 +28,7 @@ export default async function RegisterPage({
   if (user) redirect("/profile");
 
   const [locale, params] = await Promise.all([getLocale(), searchParams]);
-  const nextPath = safeNextPath(params.next);
+  const nextPath = safeNextPath(params.next, "/register");
 
   return (
     <div className="mx-auto w-full max-w-lg px-4 py-10 sm:px-6 sm:py-14">

@@ -34,15 +34,29 @@ export type JsonBodyResult =
   | { ok: false; response: Response };
 
 /**
- * Bounded JSON body reader: rejects oversized payloads before parsing (AGENT.md §3
- * "zod-parse input → try/catch → typed JSON response") and always answers in Hindi.
+ * Bounded JSON body reader: rejects oversized/poisoned payloads before parsing
+ * (AGENT.md §3 "zod-parse input → try/catch → typed JSON response") and always
+ * answers in Hindi.
+ *
+ * Security contract:
+ * 1. Only `application/json` requests are accepted. A cross-site attacker page
+ *    cannot set a foreign content type (no CORS preflight), so this is a
+ *    defence-in-depth CSRF kill-switch on top of the SameSite=Lax cookie — forms
+ *    can only POST `text/plain` / `urlencoded` / `multipart`.
+ * 2. The size cap is measured in UTF-8 bytes, not string length — a Devanagari
+ *    character is 3 bytes, so `raw.length` under-counted real payloads.
  */
 export async function readJsonBody(
   req: Request,
   maxBytes: number = MAX_JSON_BODY_BYTES
 ): Promise<JsonBodyResult> {
-  const declared = req.headers.get("content-length");
-  if (declared && Number(declared) > maxBytes) {
+  const contentType = req.headers.get("content-type");
+  if (!contentType || !contentType.toLowerCase().includes("application/json")) {
+    return { ok: false, response: jsonError("अमान्य अनुरोध।") };
+  }
+
+  const declared = Number(req.headers.get("content-length"));
+  if (Number.isInteger(declared) && declared > maxBytes) {
     return { ok: false, response: jsonError("अनुरोध बहुत बड़ा है।", 413) };
   }
 
@@ -52,7 +66,7 @@ export async function readJsonBody(
   } catch {
     return { ok: false, response: jsonError("अमान्य अनुरोध।") };
   }
-  if (raw.length > maxBytes) {
+  if (Buffer.byteLength(raw, "utf8") > maxBytes) {
     return { ok: false, response: jsonError("अनुरोध बहुत बड़ा है।", 413) };
   }
 
