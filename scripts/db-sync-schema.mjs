@@ -65,6 +65,8 @@ const ADD_USERID_COLUMNS = [
   ["Booking", "userId"],
   ["GauContribution", "userId"],
   ["Order", "userId"],
+  // Day 3 — volunteer pass is account-based (old anonymous rows keep userId NULL).
+  ["Volunteer", "userId"],
 ];
 
 function quoteIdent(name) {

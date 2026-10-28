@@ -505,22 +505,38 @@ test.describe("F7 directory", () => {
 /* ---------------- F8 volunteer ---------------- */
 
 test.describe("F8 volunteer", () => {
-  test("TC-VL-01 valid registration → पास toast", async ({ page }) => {
+  test("TC-VL-01 guest volunteer modal → login-required CTA (Day 3: no anonymous form)", async ({ page }) => {
     await page.goto("/menu");
     await page.getByRole("button", { name: /सेवा दल \(स्वयंसेवक\) पंजीकरण/ }).click();
-    await page.locator("#vol-name").fill("अर्जुन सिंह");
-    await page.locator("#vol-wa").fill("9112345678");
-    await page.getByRole("button", { name: "सेवा दल पास प्राप्त करें" }).click();
-    await expect(page.getByText("सेवा दल पास जारी करने की प्रक्रिया प्रारंभ हो गई है। धन्यवाद!")).toBeVisible();
+    await expect(page.getByText("सेवा दल पास खाते से जुड़ता है — पहले लॉग इन करें।")).toBeVisible();
+    const loginLink = page.getByRole("link", { name: /लॉग इन/ }).last();
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", /next=%2Fmenu/);
   });
 
-  test("TC-VL-02 WhatsApp '123' rejected", async ({ page }) => {
+  test("TC-VL-02 logged-in: account-name note + WhatsApp-only submit → पास toast", async ({ page, request }) => {
+    const email = `e2e-vol-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`;
+    const created = await request.post("/api/auth/register", {
+      data: { name: "अर्जुन सिंह", email, password: "e2ePassword123" },
+    });
+    expect(created.status()).toBe(201);
+
+    await page.goto("/login");
+    await page.getByLabel("ईमेल पता").fill(email);
+    await page.getByLabel("पासवर्ड").fill("e2ePassword123");
+    await page.getByRole("button", { name: "लॉग इन" }).click();
+    await expect(page).toHaveURL(/\/profile/);
+
     await page.goto("/menu");
     await page.getByRole("button", { name: /सेवा दल \(स्वयंसेवक\) पंजीकरण/ }).click();
-    await page.locator("#vol-name").fill("अर्जुन सिंह");
+    await expect(page.getByText(/पास आपके खाते के नाम .अर्जुन सिंह. से जारी होगा/)).toBeVisible();
     await page.locator("#vol-wa").fill("123");
     await page.getByRole("button", { name: "सेवा दल पास प्राप्त करें" }).click();
     await expect(page.getByText(/कृपया 10 अंकों का मोबाइल नंबर लिखें/)).toBeVisible();
+
+    await page.locator("#vol-wa").fill("9112345678");
+    await page.getByRole("button", { name: "सेवा दल पास प्राप्त करें" }).click();
+    await expect(page.getByText("सेवा दल पास जारी करने की प्रक्रिया प्रारंभ हो गई है। धन्यवाद!")).toBeVisible();
   });
 });
 

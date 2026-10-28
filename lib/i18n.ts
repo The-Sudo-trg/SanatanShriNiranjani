@@ -142,6 +142,7 @@ const hi = {
 
   // ---- menu ----
   "menu.digitalId": "डिजिटल परिचय पत्र (आईडी एवं प्रमाण पत्र)",
+  "menu.volunteerActive": "सेवा दल पास सक्रिय",
 } as const;
 
 export type MessageKey = keyof typeof hi;
@@ -263,6 +264,7 @@ const en: Record<MessageKey, string> = {
   "auth.loginRequired": "Please log in to view this page.",
 
   "menu.digitalId": "Digital ID & certificate",
+  "menu.volunteerActive": "Volunteer pass active",
 };
 
 export const MESSAGES: Record<Locale, Record<MessageKey, string>> = { hi, en };

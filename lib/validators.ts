@@ -66,7 +66,8 @@ export const gauSevaSchema = z.object({
 });
 
 export const volunteerSchema = z.object({
-  name: z.string().trim().min(2, "कृपया अपना पूरा नाम लिखें"),
+  // Day 3 — the pass is account-based: name comes from the session user
+  // (server-side), only the WhatsApp number is supplied by the form.
   whatsapp: phoneSchema,
 });
 
@@ -130,6 +131,11 @@ export const loginSchema = z.object({
     .string({ error: "कृपया पासवर्ड लिखें" })
     .min(1, "कृपया पासवर्ड लिखें")
     .max(200, "पासवर्ड बहुत लंबा है"),
+});
+
+// Day 3 — admin sadhu approval state; only ever PATCHed through an ADMIN session.
+export const sadhuApprovalSchema = z.object({
+  sadhuVerified: z.boolean("अमान्य अनुरोध।"),
 });
 
 // Day 8 pre-wiring: feedback rows can be written from the very first day.

@@ -146,9 +146,12 @@ model Saint {
 
 model Volunteer {
   id        String   @id @default(cuid())
+  userId    String?
   name      String
   whatsapp  String
   createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model Notification {
@@ -189,6 +192,7 @@ model User {
   orders           Order[]
   gauContributions GauContribution[]
   bookings         Booking[]
+  volunteers       Volunteer[]
 }
 
 model OrderEvent {

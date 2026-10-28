@@ -64,6 +64,13 @@ describe("volunteerSchema", () => {
   });
 });
 
+describe("volunteerSchema (Day 3 — account-based)", () => {
+  it("strips any client-supplied name; only WhatsApp is form input", () => {
+    const res = volunteerSchema.parse({ whatsapp: "9112345678", name: "evil researched name" });
+    expect(res).toEqual({ whatsapp: "9112345678" });
+  });
+});
+
 describe("orderSchema", () => {
   it("requires name and phone (TC-ST-04)", () => {
     const res = orderSchema.safeParse({ buyerName: "", phone: "9999999999" });

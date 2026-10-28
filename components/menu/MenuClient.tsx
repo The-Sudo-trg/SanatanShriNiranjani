@@ -141,7 +141,7 @@ export default function MenuClient({
       {/* digital ID + actions */}
       <div className="space-y-3 rounded-2xl border border-warmBorder bg-surface p-4 shadow-sm">
         <h3 className="text-xs font-bold text-muted">{t(locale, "menu.digitalId")}</h3>
-        <DigitalId />
+        <DigitalId locale={locale} user={user} />
         <button
           type="button"
           onClick={() => setShowDirectory((v) => !v)}
@@ -163,15 +163,26 @@ export default function MenuClient({
       {/* volunteer + certificate */}
       <div className="space-y-3 rounded-2xl border border-warmBorder bg-surface p-4 shadow-sm">
         <h3 className="text-xs font-bold text-muted">सेवा एवं संकल्प</h3>
-        <button
-          type="button"
-          onClick={() => openModal("VOLUNTEER")}
-          suppressHydrationWarning
-          className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white shadow transition hover:bg-indigo-700"
-        >
-          <HeartHandshake className="h-4 w-4" aria-hidden />
-          {`निरंजनी युवा सेवा दल (${t(locale, "auth.role.volunteer")}) पंजीकरण`}
-        </button>
+        {user?.role === "VOLUNTEER" ? (
+          // Day 3 — the pass lives in the account: volunteers see it active here
+          <div
+            aria-live="polite"
+            className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-green-100 py-2 text-xs font-bold text-green-800"
+          >
+            <HeartHandshake className="h-4 w-4" aria-hidden />
+            {t(locale, "menu.volunteerActive")}
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => openModal("VOLUNTEER")}
+            suppressHydrationWarning
+            className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white shadow transition hover:bg-indigo-700"
+          >
+            <HeartHandshake className="h-4 w-4" aria-hidden />
+            {`निरंजनी युवा सेवा दल (${t(locale, "auth.role.volunteer")}) पंजीकरण`}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setCertOpen(true)}

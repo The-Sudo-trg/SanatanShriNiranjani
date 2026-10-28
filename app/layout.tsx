@@ -120,7 +120,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </main>
         <Footer locale={locale} />
         <BottomNav locale={locale} />
-        <ModalRoot temples={templeRows} saints={saintRows} />
+        <ModalRoot temples={templeRows} saints={saintRows} user={headerUser ? { name: headerUser.name } : null} />
         <CartHydrator />
         <Toaster position="top-center" richColors />
         {/* Vercel Analytics loads from va.vercel-scripts.com in dev, which the CSP

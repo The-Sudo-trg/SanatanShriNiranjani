@@ -119,7 +119,7 @@ export default async function ProfilePage() {
             {t(locale, "auth.profile.digitalId")}
           </h2>
           <div className="mt-3">
-            <DigitalId />
+            <DigitalId locale={locale} user={user} />
           </div>
         </section>
 

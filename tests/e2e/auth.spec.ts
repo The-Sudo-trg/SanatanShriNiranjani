@@ -46,7 +46,8 @@ test.describe("auth frontend", () => {
     await page.getByRole("button", { name: "लॉग इन" }).click();
 
     await expect(page).toHaveURL(/\/profile/);
-    await expect(page.getByText("ई२ई भक्त")).toBeVisible();
+    // the name legitimately appears twice now (profile + डिजिटल परिचय पत्र)
+    await expect(page.getByText("ई२ई भक्त").first()).toBeVisible();
     await expect(page.getByText(email)).toBeVisible();
   });
 
@@ -98,7 +99,8 @@ test.describe("auth frontend", () => {
     await page.getByRole("button", { name: "लॉग इन" }).click();
 
     await expect(page).toHaveURL(/\/menu/);
-    await expect(page.getByText("अगला मंज़िल भक्त")).toBeVisible();
+    // name renders twice on /menu (profile block + डिजिटल परिचय पत्र)
+    await expect(page.getByText("अगला मंज़िल भक्त").first()).toBeVisible();
   });
 
   test("sadhu registration via the role picker shows सत्यापन लंबित on /profile", async ({
@@ -118,7 +120,8 @@ test.describe("auth frontend", () => {
     await page.getByRole("button", { name: "खाता बनाएँ" }).click();
 
     await expect(page).toHaveURL(/\/profile/);
-    await expect(page.getByText("संत", { exact: true })).toBeVisible();
+    // "संत" legitimately matches multiple elements now (profile body + डिजिटल परिचय पत्र role badge)
+    await expect(page.getByText("संत", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("सत्यापन लंबित")).toBeVisible();
   });
 
@@ -136,6 +139,47 @@ test.describe("auth frontend", () => {
 
     await expect(page).toHaveURL(/\/profile/);
     await expect(page.getByText("स्वयंसेवक", { exact: true }).first()).toBeVisible();
+  });
+
+  test("Day-3 roles: admin APIs 403 for USER, 401 for guests; volunteers POST is account-based", async ({
+    request,
+  }) => {
+    const email = uniqueEmail();
+    // Playwright's request fixture persists Set-Cookie like a browser — assert
+    // the guest 401 BEFORE registering (register auto-stores the session).
+    expect((await request.get("/api/admin/sadhus")).status()).toBe(401);
+
+    const created = await request.post("/api/auth/register", {
+      data: { name: "भूमिका परीक्षक", email, password: PASSWORD, role: "VOLUNTEER" },
+    });
+    expect(created.status()).toBe(201);
+    const createdBody = (await created.json()) as { user: { id: string } };
+
+    const login = await request.post("/api/auth/login", {
+      data: { email, password: PASSWORD },
+    });
+    expect(login.status()).toBe(200);
+    const cookie = (login.headers()["set-cookie"] ?? "").split(";")[0] ?? "";
+    expect(cookie).toContain("__Host-sn_session");
+
+    // wrong-role API access → 403 ( DEVELOPMENT_PLAN Day-3 "done when" )
+    const deniedList = await request.get("/api/admin/sadhus", { headers: { cookie } });
+    expect(deniedList.status()).toBe(403);
+    const deniedPatch = await request.patch(`/api/admin/sadhus/${createdBody.user.id}`, {
+      data: { sadhuVerified: true },
+      headers: { cookie },
+    });
+    expect(deniedPatch.status()).toBe(403);
+
+    // volunteers: pass request attaches to the account
+    const vol = await request.post("/api/volunteers", {
+      data: { whatsapp: "9112345678" },
+      headers: { cookie },
+    });
+    expect(vol.status()).toBe(201);
+    const volBody = (await vol.json()) as { volunteer: { userId: string | null; name: string } };
+    expect(volBody.volunteer.userId).toBe(createdBody.user.id);
+    expect(volBody.volunteer.name).toBe("भूमिका परीक्षक");
   });
 
   test("mobile header exposes logout (full auth flow on device)", async ({ page }) => {

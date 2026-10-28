@@ -23,9 +23,12 @@ import { AkharaDirectoryModal } from "./modals/AkharaDirectoryModal";
 export default function ModalRoot({
   temples,
   saints,
+  user,
 }: {
   temples: TempleRow[];
   saints: SaintRow[];
+  /** Session user (or null) — account-based modals (Day 3 volunteer pass). */
+  user: { name: string } | null;
 }) {
   const active = useModalStore((s) => s.active);
   void active; // store subscription re-renders the tree below
@@ -35,7 +38,7 @@ export default function ModalRoot({
       <GadiPujaModal />
       <NamkaranModal />
       <SantBookingModal />
-      <VolunteerModal />
+      <VolunteerModal user={user} />
       <LiveDarshanModal />
       <LiveGauModal />
       <NotificationModal />

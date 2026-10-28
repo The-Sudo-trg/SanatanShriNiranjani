@@ -111,8 +111,11 @@
 | TC-DR-01 | P0 | Open directory | Search input; saint card with verified chip; स्मृति खंड block |
 | TC-DR-02 | P1 | Search "महामंडलेश्वर" | Matching पद filter works; empty state if none |
 | TC-DR-03 | P0 | Memorial → जीवन गाथा | GoldenBabaModal opens; stone/somber styling, no playful animation |
-| TC-VL-01 | P0 | Volunteer: name + 10-digit WhatsApp → submit | Success toast; row persisted |
-| TC-VL-02 | P1 | WhatsApp `123` | Hindi validation error |
+| TC-VL-01 | P0 | Volunteer (Day 3 — account-based): guest opens the modal | Login-required Hindi CTA, no anonymous form rendered |
+| TC-VL-02 | P0 | Volunteer logged-in: WhatsApp-only (`123` → fix → `9112345678`) | Account-name note "अर्जुन सिंह"; Hindi validation error; success toast; row persisted with `userId` |
+| TC-AD-01 | P0 | `GET /api/admin/sadhus` | 200 sadhu list for ADMIN; 401 guest; 403 USER/VOLUNTEER (Hindi); public shape only (no `passwordHash`) |
+| TC-AD-02 | P0 | `PATCH /api/admin/sadhus/[id]` `{sadhuVerified}` | 200 + DB flip (ADMIN); 400 invalid body; 404 non-sadhu/unknown id (USER rows unreachable); 401/403 as above |
+| TC-RL-01 | P0 | Day-3 roles e2e: guest admin API, USER admin API, volunteer POST | 401 guest → 403 wrong role → 201 volunteer with `userId` + account name |
 | TC-CE-01 | P2 | Sankalp certificate button | Certificate view renders name + ID |
 
 ## 10. कुंभ 2027

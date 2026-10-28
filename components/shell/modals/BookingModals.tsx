@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Baby, Car, HandHeart } from "lucide-react";
+import Link from "next/link";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -205,8 +206,9 @@ export function SantBookingModal() {
   );
 }
 
-// निरंजनी युवा सेवा दल — F8
-export function VolunteerModal() {
+// निरंजनी युवा सेवा दल — F8 (Day 3: pass is account-based — no anonymous form).
+// Strings stay hardcoded Hindi, matching this file's existing contract copy.
+export function VolunteerModal({ user }: { user: { name: string } | null }) {
   const active = useModalStore((s) => s.active);
   const close = useModalStore((s) => s.close);
   const open = active === "VOLUNTEER";
@@ -235,21 +237,43 @@ export function VolunteerModal() {
           <HandHeart className="h-4 w-4 text-indigo-600" aria-hidden />
           निरंजनी युवा सेवा दल (Volunteer)
         </DialogTitle>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
-          <div>
-            <Label htmlFor="vol-name">आपका पूरा नाम</Label>
-            <Input suppressHydrationWarning id="vol-name" placeholder="आपका पूरा नाम" {...register("name")} />
-            <FieldError message={errors.name?.message} />
+        {user ? (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
+            <p
+              aria-live="polite"
+              className="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2 text-[11px] leading-relaxed text-indigo-700"
+            >
+              {"पास आपके खाते के नाम \u201C"}
+              {user.name}
+              {"\u201D से जारी होगा।"}
+            </p>
+            <div>
+              <Label htmlFor="vol-wa">मोबाइल नंबर (WhatsApp)</Label>
+              <Input suppressHydrationWarning id="vol-wa" type="tel" inputMode="numeric" placeholder="10 अंकों का WhatsApp नंबर" {...register("whatsapp")} />
+              <FieldError message={errors.whatsapp?.message} />
+            </div>
+            <Button suppressHydrationWarning type="submit" variant="indigo" size="lg" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "भेजा जा रहा है…" : "सेवा दल पास प्राप्त करें"}
+            </Button>
+          </form>
+        ) : (
+          <div className="space-y-3">
+            <p
+              role="alert"
+              className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-700"
+            >
+              सेवा दल पास खाते से जुड़ता है — पहले लॉग इन करें।
+            </p>
+            <Link
+              href="/login?next=%2Fmenu"
+              onClick={close}
+              suppressHydrationWarning
+              className="flex min-h-11 w-full items-center justify-center rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white shadow transition hover:bg-indigo-700"
+            >
+              लॉग इन
+            </Link>
           </div>
-          <div>
-            <Label htmlFor="vol-wa">मोबाइल नंबर (WhatsApp)</Label>
-            <Input suppressHydrationWarning id="vol-wa" type="tel" inputMode="numeric" placeholder="10 अंकों का WhatsApp नंबर" {...register("whatsapp")} />
-            <FieldError message={errors.whatsapp?.message} />
-          </div>
-          <Button suppressHydrationWarning type="submit" variant="indigo" size="lg" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "भेजा जा रहा है…" : "सेवा दल पास प्राप्त करें"}
-          </Button>
-        </form>
+        )}
       </DialogContent>
     </Dialog>
   );
