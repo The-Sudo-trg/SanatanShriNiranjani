@@ -213,7 +213,11 @@ Automated in `tests/e2e/auth.spec.ts` plus updated `flows.spec.ts` / `site.spec.
 | TC-AT-18 | guest `/profile` | redirect → `/login?next=/profile` |
 | TC-AT-19 | logout → `/profile` | cookie cleared → redirect to login |
 | TC-AT-20 | header session state | logged-out: लॉग इन + पंजीकरण; logged-in: name/avatar + लॉग आउट |
+| TC-AT-20b | mobile header logout | mobile viewport लॉग आउट visible & works (register → logout → home; cookie cleared) |
 | TC-AT-21 | unsafe `?next=` | open redirect impossible; only same-origin relative paths honoured |
+| TC-AT-22 | register संत via role picker | `/profile` shows संत badge + "सत्यापन लंबित" (sadhuNote visible while picking) |
+| TC-AT-23 | register स्वयंसेवक via role picker | `/profile` shows स्वयंसेवक badge |
+| TC-AT-24 | `?next` full round-trip | login from `/login?next=%2Fmenu` lands on `/menu`, not the `/profile` default |
 | TC-LN-01 | language toggle | हिंदी default; toggle writes `sn_lang`, `<html lang>` switches, survives reload |
 | TC-LN-02 | localized chrome | nav/footer/bottom-nav/auth labels switch; sacred content stays Hindi |
 | TC-SD-01 | home saint showcase | verified cards with photo/credit/स्रोत; scroll-reveal; no placeholder names |
