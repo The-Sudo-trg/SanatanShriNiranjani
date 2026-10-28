@@ -180,6 +180,22 @@ export default function Header({ locale, user }: { locale: Locale; user: HeaderU
               <span>{t(locale, "header.login")}</span>
             )}
           </Link>
+          {user ? (
+            // Mobile has no desktop pill row, so logout must exist here too —
+            // otherwise a mobile user can only sign out from /profile.
+            <button
+              type="button"
+              onClick={logout}
+              disabled={loggingOut}
+              aria-label={t(locale, "header.logout")}
+              title={t(locale, "header.logout")}
+              suppressHydrationWarning
+              className="flex h-11 w-11 items-center justify-center rounded-full text-muted transition hover:bg-saffronSoft/50 hover:text-charcoal disabled:opacity-50 lg:hidden"
+            >
+              <LogOut className="h-5 w-5" aria-hidden />
+            </button>
+          ) : null}
+
 
           {user ? (
             <div className="hidden items-center gap-1 lg:flex">
