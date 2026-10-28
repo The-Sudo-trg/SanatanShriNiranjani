@@ -26,8 +26,14 @@ test.describe("auth frontend", () => {
     await expect(page.getByText(email)).toBeVisible();
     await expect(page.getByText("भक्त", { exact: true }).first()).toBeVisible();
 
-    // logout from the header (session cookie cleared) → home
-    await page.getByRole("button", { name: "लॉग आउट" }).first().click();
+    // logout from the header (session cookie cleared) → home. The mobile
+    // duplicate sits earlier in the DOM but is hidden at the desktop viewport,
+    // so restrict to visible buttons.
+    await page
+      .getByRole("button", { name: "लॉग आउट" })
+      .filter({ visible: true })
+      .first()
+      .click();
     await expect(page).toHaveURL(/\/$/);
 
     // protected route now redirects to login with a safe next path
@@ -69,13 +75,89 @@ test.describe("auth frontend", () => {
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test("guest /profile redirects to /login and ?next is honoured after login", async ({ page }) => {
+  test("guest /profile redirects to /login and ?next is honoured after login", async ({
+    page,
+    request,
+  }) => {
     await page.goto("/profile");
     await expect(page).toHaveURL(/\/login\?next=(%2F|\/)profile/);
 
-    // A safe same-origin next target round-trips.
+    // A safe same-origin next target round-trips: the real login must land on
+    // the requested page (/menu), not the /profile default.
     await page.goto("/login?next=%2Fmenu");
     await expect(page.getByRole("heading", { name: "लॉग इन करें" })).toBeVisible();
+
+    const email = uniqueEmail();
+    const created = await request.post("/api/auth/register", {
+      data: { name: "अगला मंज़िल भक्त", email, password: PASSWORD },
+    });
+    expect(created.status()).toBe(201);
+
+    await page.getByLabel("ईमेल पता").fill(email);
+    await page.getByLabel("पासवर्ड").fill(PASSWORD);
+    await page.getByRole("button", { name: "लॉग इन" }).click();
+
+    await expect(page).toHaveURL(/\/menu/);
+    await expect(page.getByText("अगला मंज़िल भक्त")).toBeVisible();
+  });
+
+  test("sadhu registration via the role picker shows सत्यापन लंबित on /profile", async ({
+    page,
+  }) => {
+    const email = uniqueEmail();
+
+    await page.goto("/register");
+    await page.getByLabel("पूरा नाम").fill("ई२ई श्री स्वामी");
+    await page.getByLabel("ईमेल पता").fill(email);
+    await page.getByLabel("पासवर्ड").fill(PASSWORD);
+    await page.getByRole("radio", { name: /संत/ }).check();
+
+    // Choosing संत must surface the live "verification pending" note.
+    await expect(page.getByText(/सत्यापन तक/)).toBeVisible();
+
+    await page.getByRole("button", { name: "खाता बनाएँ" }).click();
+
+    await expect(page).toHaveURL(/\/profile/);
+    await expect(page.getByText("संत", { exact: true })).toBeVisible();
+    await expect(page.getByText("सत्यापन लंबित")).toBeVisible();
+  });
+
+  test("volunteer registration via the role picker lands on /profile as स्वयंसेवक", async ({
+    page,
+  }) => {
+    const email = uniqueEmail();
+
+    await page.goto("/register");
+    await page.getByLabel("पूरा नाम").fill("ई२ई सेवा स्वयंसेवक");
+    await page.getByLabel("ईमेल पता").fill(email);
+    await page.getByLabel("पासवर्ड").fill(PASSWORD);
+    await page.getByRole("radio", { name: /स्वयंसेवक/ }).check();
+    await page.getByRole("button", { name: "खाता बनाएँ" }).click();
+
+    await expect(page).toHaveURL(/\/profile/);
+    await expect(page.getByText("स्वयंसेवक", { exact: true }).first()).toBeVisible();
+  });
+
+  test("mobile header exposes logout (full auth flow on device)", async ({ page }) => {
+    const email = uniqueEmail();
+    // explicit device-flow viewport (TC-SH-01 tier)
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    await page.goto("/register");
+    await page.getByLabel("पूरा नाम").fill("ई२ई मोबाइल भक्त");
+    await page.getByLabel("ईमेल पता").fill(email);
+    await page.getByLabel("पासवर्ड").fill(PASSWORD);
+    await page.getByRole("radio", { name: /भक्त/ }).check();
+    await page.getByRole("button", { name: "खाता बनाएँ" }).click();
+    await expect(page).toHaveURL(/\/profile/);
+
+    // the mobile-only header logout button
+    await page
+      .getByRole("button", { name: "लॉग आउट" })
+      .filter({ visible: true })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/$/);
   });
 
   test("language toggle switches the auth chrome to English and persists via cookie", async ({
