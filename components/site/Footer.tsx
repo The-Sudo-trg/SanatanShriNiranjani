@@ -1,10 +1,10 @@
-import Link from "next/link";
+import Link from "@/i18n/navigation";
 
 import { APP_NAME, APP_SUBTITLE } from "@/lib/constants";
 import { t, type Locale, type MessageKey } from "@/lib/i18n";
 
 // Footer v2 (brief §4.7) — charcoal band, four link columns, legal row.
-// Labels come from the locale cookie (Hindi default, English toggle).
+// Labels are rendered from the URL-selected locale.
 type FooterLink = { href: string; key: MessageKey };
 
 const COLS: ReadonlyArray<{ titleKey: MessageKey; links: FooterLink[] }> = [

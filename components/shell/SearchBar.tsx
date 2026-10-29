@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { MapPin, Search } from "lucide-react";
 import { useModalStore } from "@/stores/modals";
 import { matchSearchKeyword } from "@/lib/search";

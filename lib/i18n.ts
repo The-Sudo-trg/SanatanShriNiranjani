@@ -6,16 +6,31 @@
 // locale translates the shell so non-Hindi visitors can navigate, never the
 // scripture itself.
 //
-// The choice is persisted in a first-party cookie (`sn_lang`, 1 year) and read on
-// the server in `app/layout.tsx`, so there is no flash and it survives reloads,
-// new tabs and navigation. Default is Hindi.
-export const LOCALES = ["hi", "en"] as const;
+// Locale routing is URL-based (`/en/...`, `/hi/...`). next-intl persists it in
+// the NEXT_LOCALE cookie for unprefixed entry points. Default is English.
+export const LOCALES = ["en", "hi"] as const;
 export type Locale = (typeof LOCALES)[number];
-export const DEFAULT_LOCALE: Locale = "hi";
-export const LOCALE_COOKIE = "sn_lang";
+export const DEFAULT_LOCALE: Locale = "en";
+export const LOCALE_COOKIE = "NEXT_LOCALE";
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
 const hi = {
+  "about.title": "परिचय",
+  "about.intro": "सनातन श्री निरंजनी — श्री पंचायती अखाड़ा निरंजनी का डिजिटल द्वार — सनातन धर्म की साधना, दर्शन और सेवा को रोज़मर्रा के जीवन से जोड़ने का प्रयास है।",
+  "about.mission": "हमारा उद्देश्य सीधा है:",
+  "about.point1": "प्रतिदिन उपयोगी आध्यात्मिक सामग्री — दर्शन, प्रेरणा, मंत्र, पर्व-मार्गदर्शन।",
+  "about.point2": "दिल्ली NCR के वास्तविक मन्दिरों की सत्यापित, स्रोत-सहित जानकारी।",
+  "about.point3": "अखाड़े की सेवाएँ — गौ सेवा, वृक्षारोपण, पूजा बुकिंग, पूजा सामग्री।",
+  "about.point4": "आदरपूर्ण भाषा, सांस्कृतिक प्रामाणिकता और स्पष्ट स्रोत-विवरण।",
+  "about.principles": "हमारे सिद्धान्त",
+  "about.truth": "सत्य: जो सत्यापित नहीं है, उसे सत्यापित ही लिखा जाता है। तिथि, समय व सूचना के स्रोत दिखाए जाते हैं।",
+  "about.respect": "आदर: किसी सम्प्रदाय की श्रेष्ठता का दावा नहीं; सभी परम्पराओं का समान सम्मान।",
+  "about.privacy": "निजता: प्राथमिकताएँ व सेव-सूची आपके उपकरण पर रहती हैं — खाता बनाना आवश्यक नहीं।",
+  "about.service": "सेवा: विज्ञापन-प्रेरित नहीं, भक्ति-प्रेरित अनुभव।",
+  "about.corrections": "सुझाव व सुधार",
+  "about.correctionPrompt": "कोई गलती या सुझाव?",
+  "about.correctionLink": "स्रोत एवं सुधार पृष्ठ",
+  "about.correctionEnd": "पर बताया गया मार्ग अपनाएँ। हर सुधार-सुझाव श्रद्धा व सत्य की सेवा है।",
   // ---- shell / header ----
   "nav.daily": "दैनिक दर्शन",
   "nav.temples": "मंदिर",
@@ -148,6 +163,22 @@ const hi = {
 export type MessageKey = keyof typeof hi;
 
 const en: Record<MessageKey, string> = {
+  "about.title": "About",
+  "about.intro": "Sanatan Shri Niranjani, the digital gateway of Shri Panchayati Akhara Niranjani, connects the practice, darshan and service of Sanatan Dharma with everyday life.",
+  "about.mission": "Our purpose is simple:",
+  "about.point1": "Useful daily spiritual content: darshan, inspiration, mantras and festival guidance.",
+  "about.point2": "Verified, sourced information about real temples across Delhi NCR.",
+  "about.point3": "Akhara services including gau seva, tree planting, puja bookings and worship items.",
+  "about.point4": "Respectful language, cultural authenticity and clear sources.",
+  "about.principles": "Our principles",
+  "about.truth": "Truth: Unverified information is never presented as verified. Sources, dates and times are shown.",
+  "about.respect": "Respect: We make no claims of one tradition’s superiority and respect all traditions equally.",
+  "about.privacy": "Privacy: Preferences and saved items stay on your device; an account is not required.",
+  "about.service": "Service: An experience guided by devotion, not advertising.",
+  "about.corrections": "Suggestions and corrections",
+  "about.correctionPrompt": "Found an error or have a suggestion?",
+  "about.correctionLink": "Visit Sources & Corrections",
+  "about.correctionEnd": "for guidance. Every correction serves truth and devotion.",
   "nav.daily": "Daily Darshan",
   "nav.temples": "Temples",
   "nav.festivals": "Festivals",
@@ -277,9 +308,9 @@ export function normalizeLocale(value: unknown): Locale {
   return isLocale(value) ? value : DEFAULT_LOCALE;
 }
 
-/** Translate a key for a locale (falls back to Hindi, then the key itself). */
+/** Translate a key for a locale (falls back to English, then the key itself). */
 export function t(locale: Locale, key: MessageKey): string {
-  return MESSAGES[locale]?.[key] ?? MESSAGES[DEFAULT_LOCALE][key] ?? key;
+  return MESSAGES[locale]?.[key] ?? MESSAGES.en[key] ?? key;
 }
 
 export type Translator = (key: MessageKey) => string;

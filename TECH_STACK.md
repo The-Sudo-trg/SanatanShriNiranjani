@@ -211,3 +211,16 @@ license (CC0 / CC BY-SA 3.0 / CC BY-SA 4.0 / FAL / PD), hot-linked from
 shows inline attribution + source page link. Where no correctly-licensed photo
 of the actual temple exists, a clean ॐ placeholder is used — never a similar
 temple's photo, never AI-generated imagery presented as photography.
+
+### ADR-005: next-intl locale routing
+**Status:** adopted 2026-10-28. Use `next-intl` 4.x with URL-prefixed locales
+(`/en/...`, `/hi/...`), English as the default locale, and `NEXT_LOCALE` as the
+persisted preference for unprefixed entry points. Next.js 16 uses `proxy.ts`
+for request routing (the former `middleware.ts` convention). Shared route-aware
+links and client navigation come from `i18n/navigation.ts`; translations are
+loaded in request configuration and remain on the server unless a client
+component needs them. The existing bilingual catalogue remains the source for
+the shell and auth UI; sacred source content remains in its authored Hindi.
+**Replaces:** the hand-managed `sn_lang` cookie and unprefixed-only locale
+resolution. **Bundle cost:** adds next-intl 4.13.6 and its runtime dependencies;
+messages are not serialized to client components by the shared provider.

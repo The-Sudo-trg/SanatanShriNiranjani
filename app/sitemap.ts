@@ -1,31 +1,51 @@
 import type { MetadataRoute } from "next";
 import { TEMPLES } from "@/lib/data/temples";
+import { routing } from "@/i18n/routing";
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://sanatanshriniranjani.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const pages: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${SITE_URL}/daily-darshan`, lastModified: now, changeFrequency: "daily", priority: 0.9 },
-    { url: `${SITE_URL}/temples`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${SITE_URL}/festivals`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${SITE_URL}/mantras`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${SITE_URL}/granth`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/gau-seva`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/store`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE_URL}/kumbh-2027`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${SITE_URL}/content-sources`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${SITE_URL}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+  const paths = [
+    { path: "", changeFrequency: "daily" as const, priority: 1 },
+    { path: "/daily-darshan", changeFrequency: "daily" as const, priority: 0.9 },
+    { path: "/temples", changeFrequency: "weekly" as const, priority: 0.9 },
+    { path: "/festivals", changeFrequency: "weekly" as const, priority: 0.8 },
+    { path: "/mantras", changeFrequency: "monthly" as const, priority: 0.8 },
+    { path: "/granth", changeFrequency: "monthly" as const, priority: 0.7 },
+    { path: "/gau-seva", changeFrequency: "monthly" as const, priority: 0.7 },
+    { path: "/store", changeFrequency: "monthly" as const, priority: 0.6 },
+    { path: "/kumbh-2027", changeFrequency: "monthly" as const, priority: 0.7 },
+    { path: "/about", changeFrequency: "yearly" as const, priority: 0.4 },
+    { path: "/contact", changeFrequency: "yearly" as const, priority: 0.4 },
+    { path: "/content-sources", changeFrequency: "monthly" as const, priority: 0.5 },
+    { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
+    { path: "/terms", changeFrequency: "yearly" as const, priority: 0.3 },
   ];
-  const temples: MetadataRoute.Sitemap = TEMPLES.map((t) => ({
-    url: `${SITE_URL}/temples/${t.slug}`,
-    lastModified: new Date(t.lastVerified),
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
-  return [...pages, ...temples];
+  const pathsWithTemples = [
+    ...paths.map((page) => ({ ...page, lastModified: now })),
+    ...TEMPLES.map((temple) => ({
+      path: `/temples/${temple.slug}`,
+      lastModified: new Date(temple.lastVerified),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+  ];
+  const pages: MetadataRoute.Sitemap = pathsWithTemples.flatMap((page) =>
+    routing.locales.map((locale) => ({
+      url: `${SITE_URL}/${locale}${page.path}`,
+      lastModified: page.lastModified,
+      changeFrequency: page.changeFrequency,
+      priority: page.priority,
+      alternates: {
+        languages: Object.fromEntries(
+          routing.locales.map((alternateLocale) => [
+            alternateLocale,
+            `${SITE_URL}/${alternateLocale}${page.path}`,
+          ]),
+        ),
+      },
+    })),
+  );
+  return pages;
 }

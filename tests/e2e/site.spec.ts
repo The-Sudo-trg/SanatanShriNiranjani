@@ -133,7 +133,9 @@ test.describe("informational pages + shell", () => {
   test("sitemap and robots are served", async ({ request }) => {
     const sitemap = await request.get("/sitemap.xml");
     expect(sitemap.status()).toBe(200);
-    expect(await sitemap.text()).toContain("/temples/kalkaji-mandir-new-delhi");
+    const sitemapXml = await sitemap.text();
+    expect(sitemapXml).toContain("/en/temples/kalkaji-mandir-new-delhi");
+    expect(sitemapXml).toContain("/hi/temples/kalkaji-mandir-new-delhi");
     const robots = await request.get("/robots.txt");
     expect(robots.status()).toBe(200);
     expect(await robots.text()).toContain("Sitemap:");

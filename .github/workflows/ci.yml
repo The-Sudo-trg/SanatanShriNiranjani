@@ -27,6 +27,16 @@ jobs:
       - name: Unit tests
         run: npm run test
 
+      # Build/e2e prerender root layout DB reads against file:./dev.db, which is
+      # gitignored and never created by the build chain (db-sync/ensure-admin skip
+      # without Turso secrets). Provision schema + seed content first.
+      - name: Provision local SQLite database
+        run: |
+          npx prisma db push --skip-generate
+          npm run db:seed
+        env:
+          DATABASE_URL: 'file:./dev.db'
+
       - name: Production build
         run: npm run build
         env:

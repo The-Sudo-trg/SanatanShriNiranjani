@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { buildSearchIndex, searchContent, type SearchHit } from "@/lib/site-search";

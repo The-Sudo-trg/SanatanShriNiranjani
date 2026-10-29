@@ -1,16 +1,14 @@
-import { cookies } from "next/headers";
+import { getLocale as getNextIntlLocale } from "next-intl/server";
 
-import { DEFAULT_LOCALE, LOCALE_COOKIE, normalizeLocale, type Locale } from "./i18n";
+import { DEFAULT_LOCALE, normalizeLocale, type Locale } from "./i18n";
 
 /**
- * Server-side locale: read the `sn_lang` cookie in a Request scope (layout,
- * Server Components, route handlers). Falls back to Hindi outside a request
- * scope (unit tests / build) so callers never crash.
+ * Server-side locale from next-intl's URL-derived request configuration.
+ * Falls back to English outside a request scope so callers never crash.
  */
 export async function getLocale(): Promise<Locale> {
   try {
-    const store = await cookies();
-    return normalizeLocale(store.get(LOCALE_COOKIE)?.value);
+    return normalizeLocale(await getNextIntlLocale());
   } catch {
     return DEFAULT_LOCALE;
   }

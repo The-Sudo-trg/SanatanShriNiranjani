@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { House, Landmark, ScrollText, Settings, Sunrise } from "lucide-react";
 
 import { t, type Locale, type MessageKey } from "@/lib/i18n";

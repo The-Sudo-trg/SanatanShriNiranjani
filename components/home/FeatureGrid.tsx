@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/i18n/navigation";
 import { HousePlug, Landmark, Store, Video } from "lucide-react";
 import { useModalStore } from "@/stores/modals";
 import CowIcon from "@/components/icons/CowIcon";

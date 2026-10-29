@@ -34,7 +34,7 @@ test.describe("auth frontend", () => {
       .filter({ visible: true })
       .first()
       .click();
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/(?:en|hi)\/?$/);
 
     // protected route now redirects to login with a safe next path
     await page.goto("/profile");
@@ -201,24 +201,30 @@ test.describe("auth frontend", () => {
       .filter({ visible: true })
       .first()
       .click();
-    await expect(page).toHaveURL(/\/$/);
+    await expect(page).toHaveURL(/\/(?:en|hi)\/?$/);
   });
 
-  test("language toggle switches the auth chrome to English and persists via cookie", async ({
+  test("locale routing and NEXT_LOCALE persist across navigation and reload", async ({
     page,
   }) => {
+    await page.context().clearCookies();
     await page.goto("/login");
-    await page.getByRole("button", { name: "भाषा बदलें (English)" }).click();
     await expect(page.getByRole("heading", { name: "Log in" })).toBeVisible();
-
-    // cookie persisted → still English after reload / direct navigation
-    await page.reload();
-    await expect(page.getByRole("heading", { name: "Log in" })).toBeVisible();
+    await expect(page).toHaveURL(/\/en\/login$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
-    // switch back to Hindi
     await page.getByRole("button", { name: "Switch language (हिन्दी)" }).click();
     await expect(page.getByRole("heading", { name: "लॉग इन करें" })).toBeVisible();
+    await expect(page).toHaveURL(/\/hi\/login$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "hi");
+    expect((await page.context().cookies()).find((cookie) => cookie.name === "NEXT_LOCALE")?.value).toBe("hi");
+
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "लॉग इन करें" })).toBeVisible();
+
+    await page.goBack();
+    await expect(page).toHaveURL(/\/en\/login$/);
+    await expect(page.getByRole("heading", { name: "Log in" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/i18n/navigation";
 import { Heart, Trash2 } from "lucide-react";
 import { useFavoritesStore, type FavItem } from "@/lib/favorites";
 

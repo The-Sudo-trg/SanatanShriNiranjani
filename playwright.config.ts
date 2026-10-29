@@ -14,6 +14,23 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     baseURL: "http://localhost:3100",
+    // Existing UI assertions exercise Hindi. The locale-routing test clears
+    // this preference to verify the English first-visit default explicitly.
+    storageState: {
+      cookies: [
+        {
+          name: "NEXT_LOCALE",
+          value: "hi",
+          domain: "localhost",
+          path: "/",
+          expires: -1,
+          httpOnly: false,
+          secure: false,
+          sameSite: "Lax",
+        },
+      ],
+      origins: [],
+    },
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     locale: "hi-IN",

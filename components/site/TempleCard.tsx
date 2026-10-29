@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/i18n/navigation";
 import { MapPin, Navigation } from "lucide-react";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import type { Temple } from "@/lib/data/temples";

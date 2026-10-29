@@ -11,17 +11,16 @@ import {
   t,
 } from "@/lib/i18n";
 
-// Language toggle contract: Hindi is the default, English must be a complete
-// overlay of the same keys, and unknown cookie values must fail safe to Hindi.
+// Language toggle contract: English is the default and unknown locales fail safe to English.
 describe("i18n", () => {
-  it("defaults to Hindi and recognises only supported locales", () => {
-    expect(DEFAULT_LOCALE).toBe("hi");
-    expect(LOCALES).toEqual(["hi", "en"]);
+  it("defaults to English and recognises only supported locales", () => {
+    expect(DEFAULT_LOCALE).toBe("en");
+    expect(LOCALES).toEqual(["en", "hi"]);
     expect(isLocale("hi")).toBe(true);
     expect(isLocale("en")).toBe(true);
     expect(isLocale("fr")).toBe(false);
     expect(isLocale(undefined)).toBe(false);
-    expect(normalizeLocale("fr")).toBe("hi");
+    expect(normalizeLocale("fr")).toBe("en");
     expect(normalizeLocale("en")).toBe("en");
   });
 

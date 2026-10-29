@@ -1,27 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { Languages } from "lucide-react";
 
-import {
-  LOCALE_COOKIE,
-  LOCALE_COOKIE_MAX_AGE,
-  t,
-  type Locale,
-} from "@/lib/i18n";
+import { t, type Locale } from "@/lib/i18n";
 
 /**
- * Language toggle (top bar). Writes the first-party `sn_lang` cookie and
- * refreshes the Server Components so the whole shell re-renders in the chosen
- * language immediately — no flash, survives reload/navigation for one year.
+ * Change locale with client navigation. next-intl updates NEXT_LOCALE and keeps
+ * the current route, query and fragment without a document reload.
  */
 export default function LanguageToggle({ locale }: { locale: Locale }) {
   const router = useRouter();
+  const pathname = usePathname();
   const next: Locale = locale === "hi" ? "en" : "hi";
 
   function switchLanguage() {
-    document.cookie = `${LOCALE_COOKIE}=${next}; Path=/; Max-Age=${LOCALE_COOKIE_MAX_AGE}; SameSite=Lax`;
-    router.refresh();
+    router.push(`${pathname}${window.location.search}${window.location.hash}`, { locale: next });
   }
 
   return (
