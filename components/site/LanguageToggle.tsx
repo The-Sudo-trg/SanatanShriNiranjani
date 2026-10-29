@@ -31,7 +31,7 @@ export default function LanguageToggle({ locale }: { locale: Locale }) {
     >
       <Languages className="h-5 w-5" aria-hidden />
       <span className="text-[11px] font-bold" aria-hidden>
-        {t(next, "lang.short")}
+        {next === "hi" ? "HI" : "EN"}
       </span>
     </button>
   );

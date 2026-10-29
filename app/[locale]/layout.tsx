@@ -15,6 +15,7 @@ import { isLocale } from "@/lib/i18n";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import type { SaintRow, TempleRow } from "@/lib/content";
+import { SADHUS } from "@/lib/data/sadhus";
 import "../globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://sanatanshriniranjani.vercel.app";
@@ -88,22 +89,30 @@ export default async function RootLayout({
   const headerUser = user
     ? { id: user.id, name: user.name, email: user.email, role: user.role }
     : null;
-  const templeRows: TempleRow[] = temples.map((t) => ({
+  const templeEnglish = [
+    ["Sanatan Shiva Temple", "Approx. 90 meters"],
+    ["Panchmukhi Hanuman Temple", "Approx. 2.3 kilometers"],
+    ["Niranjani Akhara branch (Haridwar / Prayagraj)", "Official ashram and cantonment"],
+  ];
+  const templeRows: TempleRow[] = temples.map((t, index) => ({
     id: t.id,
-    nameHi: t.nameHi,
-    distanceText: t.distanceText,
+    nameHi: locale === "en" ? (templeEnglish[index]?.[0] ?? "Temple") : t.nameHi,
+    distanceText: locale === "en" ? (templeEnglish[index]?.[1] ?? "Nearby") : t.distanceText,
     isAkhadaBranch: t.isAkhadaBranch,
   }));
-  const saintRows: SaintRow[] = saints.map((s) => ({
-    id: s.id,
-    nameHi: s.nameHi,
-    pad: s.pad,
-    bioHi: s.bioHi,
-    originHi: s.originHi,
-    memorial: s.memorial,
-    verified: s.verified,
-    order: s.order,
-  }));
+  const saintRows: SaintRow[] = saints.map((s) => {
+    const englishSaint = SADHUS.find((record) => record.id === s.id);
+    return {
+      id: s.id,
+      nameHi: locale === "en" ? (englishSaint?.nameEn ?? "Spiritual teacher") : s.nameHi,
+      pad: locale === "en" ? "Spiritual teacher" : s.pad,
+      bioHi: locale === "en" ? "Verified profile" : s.bioHi,
+      originHi: locale === "en" ? null : s.originHi,
+      memorial: s.memorial,
+      verified: s.verified,
+      order: s.order,
+    };
+  });
 
   return (
     <html

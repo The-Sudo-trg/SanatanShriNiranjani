@@ -91,7 +91,7 @@ export default function Footer({ locale }: { locale: Locale }) {
         </div>
         <div className="mt-8 flex flex-col gap-2 border-t border-gray-700 pt-4 text-[11px] text-gray-400 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {APP_NAME} — {t(locale, "footer.copyright")}
+            © {new Date().getFullYear()} {brandName} — {t(locale, "footer.copyright")}
           </p>
           <p>
             {t(locale, "footer.correction")}{" "}
