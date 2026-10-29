@@ -42,11 +42,9 @@
   --color-maroonText: #1f1b18;
   --color-deepSaffron: #d95300;
 
-  --font-devanagari: var(--font-noto-devanagari), "Noto Sans Devanagari", "Segoe UI", Tahoma,
-    Verdana, sans-serif;
-  --font-body: var(--font-inter), var(--font-noto-devanagari), "Segoe UI", Tahoma, sans-serif;
-  --font-heading: var(--font-playfair), "Playfair Display", Georgia, var(--font-noto-devanagari),
-    serif;
+  --font-devanagari: "Noto Sans Devanagari", "Segoe UI", Tahoma, Verdana, sans-serif;
+  --font-body: Inter, var(--font-devanagari), "Segoe UI", Tahoma, sans-serif;
+  --font-heading: "Playfair Display", Georgia, var(--font-devanagari), serif;
 }
 
 body {
@@ -54,8 +52,8 @@ body {
   color: var(--color-charcoal);
 }
 
-/* Editorial headings use the serif stack; Devanagari automatically falls back
-   to Noto Sans Devanagari (declared after Playfair in --font-heading). */
+/* Editorial headings use the serif stack; Devanagari falls back to the system
+   Devanagari font when the named family is unavailable. */
 .font-heading {
   font-family: var(--font-heading);
 }

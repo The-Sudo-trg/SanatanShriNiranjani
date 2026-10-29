@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Noto_Sans_Devanagari, Playfair_Display } from "next/font/google";
 import { Toaster } from "sonner";
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
@@ -17,27 +16,6 @@ import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import type { SaintRow, TempleRow } from "@/lib/content";
 import "../globals.css";
-
-// Fonts (brief Phase 2): Inter for Latin body, Playfair Display for editorial
-// headings, Noto Sans Devanagari for Hindi/Sanskrit — swap display, 2 weights.
-const devanagari = Noto_Sans_Devanagari({
-  subsets: ["devanagari", "latin"],
-  weight: ["400", "700"],
-  display: "swap",
-  variable: "--font-noto-devanagari",
-});
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-  variable: "--font-inter",
-});
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["500", "700"],
-  display: "swap",
-  variable: "--font-playfair",
-});
 
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://sanatanshriniranjani.vercel.app";
 const SITE_NAME = "सनातन श्री निरंजनी";
@@ -129,7 +107,6 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${locale === "hi" ? devanagari.variable : ""} ${inter.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-cream font-body text-charcoal" suppressHydrationWarning>
