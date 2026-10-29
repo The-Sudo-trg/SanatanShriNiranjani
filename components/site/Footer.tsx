@@ -47,6 +47,8 @@ const COLS: ReadonlyArray<{ titleKey: MessageKey; links: FooterLink[] }> = [
 ];
 
 export default function Footer({ locale }: { locale: Locale }) {
+  const brandName = locale === "en" ? "Sanatan Shri Niranjani" : APP_NAME;
+  const brandSubtitle = locale === "en" ? "Shri Panchayati Akhara Niranjani" : APP_SUBTITLE;
   return (
     <footer className="mt-12 bg-footerBg text-gray-300">
       <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
@@ -57,11 +59,11 @@ export default function Footer({ locale }: { locale: Locale }) {
                 aria-hidden
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-saffron text-lg font-bold text-white"
               >
-                ॐ
+                {locale === "en" ? "SN" : "ॐ"}
               </span>
               <span>
-                <span className="block font-heading text-base font-bold text-white">{APP_NAME}</span>
-                <span className="text-[10px] tracking-wider text-gray-400">{APP_SUBTITLE}</span>
+                <span className="block font-heading text-base font-bold text-white">{brandName}</span>
+                <span className="text-[10px] tracking-wider text-gray-400">{brandSubtitle}</span>
               </span>
             </div>
             <p className="mt-3 text-xs leading-relaxed text-gray-400">{t(locale, "footer.blurb")}</p>

@@ -201,8 +201,8 @@ const en: Record<MessageKey, string> = {
   "search.nearby": "Temples near me",
 
   "lang.label": "Language",
-  "lang.switchTo": "Switch language (हिन्दी)",
-  "lang.hi": "हिन्दी",
+  "lang.switchTo": "Switch language (Hindi)",
+  "lang.hi": "Hindi",
   "lang.en": "English",
   "lang.short": "EN",
 

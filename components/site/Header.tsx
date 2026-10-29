@@ -71,24 +71,26 @@ export default function Header({ locale, user }: { locale: Locale; user: HeaderU
   }
 
   const firstName = user?.name?.trim().split(/\s+/)[0] ?? "";
-  const initial = user?.name?.trim()?.[0] ?? "ॐ";
+  const initial = user?.name?.trim()?.[0] ?? (locale === "en" ? "SN" : "ॐ");
+  const brandName = locale === "en" ? "Sanatan Shri Niranjani" : APP_NAME;
+  const brandSubtitle = locale === "en" ? "Shri Panchayati Akhara Niranjani" : APP_SUBTITLE;
 
   return (
     <header className="sticky top-0 z-30 border-b border-warmBorder bg-surface/95 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-3 sm:px-6">
-        <Link href="/" className="flex min-w-0 items-center gap-2" aria-label={APP_NAME}>
+        <Link href="/" className="flex min-w-0 items-center gap-2" aria-label={brandName}>
           <span
             aria-hidden
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-saffron text-lg font-bold text-white shadow-sm"
           >
-            ॐ
+            {locale === "en" ? "SN" : "ॐ"}
           </span>
           <span className="min-w-0 leading-tight">
             <span className="block truncate font-heading text-sm font-bold text-charcoal sm:text-lg">
-              {APP_NAME}
+              {brandName}
             </span>
             <span className="hidden text-[10px] tracking-wider text-muted sm:block">
-              {APP_SUBTITLE}
+              {brandSubtitle}
             </span>
           </span>
         </Link>

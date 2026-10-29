@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "@/i18n/navigation";
 import { CalendarDays, Quote, TreePine } from "lucide-react";
 import FeatureGrid from "@/components/home/FeatureGrid";
+import EnglishHome from "@/components/home/EnglishHome";
 import QuickCards from "@/components/home/QuickCards";
 import GoldenBabaCard from "@/components/home/GoldenBabaCard";
 import SatsangPlayer from "@/components/home/SatsangPlayer";
@@ -44,7 +45,10 @@ const INTERESTS = [
   { href: "/gau-seva", labelHi: "गौ सेवा एवं प्रकृति" },
 ];
 
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (locale === "en") return <EnglishHome />;
+
   const todayKey = kolkataDayKey(0);
   const todayDate = new Date(`${todayKey}T00:00:00.000Z`);
 

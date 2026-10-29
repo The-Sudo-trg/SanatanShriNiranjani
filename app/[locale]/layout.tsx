@@ -27,6 +27,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: requestedLocale } = await params;
   const locale = isLocale(requestedLocale) ? requestedLocale : "en";
+  const siteName = locale === "en" ? "Sanatan Shri Niranjani" : SITE_NAME;
   const siteTitle =
     locale === "en"
       ? "Sanatan Shri Niranjani — Darshan, temples, festivals and mantras"
@@ -38,13 +39,13 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: siteTitle, template: `%s | ${SITE_NAME}` },
+    title: { default: siteTitle, template: `%s | ${siteName}` },
     description,
     manifest: "/manifest.json",
-    applicationName: SITE_NAME,
+    applicationName: siteName,
     openGraph: {
       type: "website",
-      siteName: SITE_NAME,
+      siteName,
       title: siteTitle,
       description,
       locale: locale === "en" ? "en_US" : "hi_IN",
