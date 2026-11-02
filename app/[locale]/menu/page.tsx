@@ -1,11 +1,18 @@
+import type { Metadata } from "next";
 import MenuClient from "@/components/menu/MenuClient";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import type { SaintRow } from "@/lib/content";
 import { getLocale } from "@/lib/i18n-server";
+import { localeCopy } from "@/lib/locale-copy";
 
 // मेनू / Profile page (M7) — session-aware account card + seva shortcuts.
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: localeCopy(locale, "खाता एवं सेवा", "Account and services") };
+}
 
 export default async function MenuPage() {
   const [saints, user, locale] = await Promise.all([

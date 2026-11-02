@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useModalStore } from "@/stores/modals";
 import type { SaintRow } from "@/lib/content";
+import { localeCopy } from "@/lib/locale-copy";
+import type { Locale } from "@/lib/i18n";
 
 // अखाड़ा directory (menu variant) — search filter, verified chip, स्मृति खंड (TC-DR-01..03)
-export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
+export default function DirectorySection({ saints, locale }: { saints: SaintRow[]; locale: Locale }) {
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
   const [query, setQuery] = useState("");
   const openModal = useModalStore((s) => s.open);
 
@@ -27,12 +30,12 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="नाम या पद से खोजें... (जैसे: महामंडलेश्वर)"
-        aria-label="पदाधिकारी खोजें"
+        placeholder={c("नाम या पद से खोजें... (जैसे: महामंडलेश्वर)", "Search by name or role…")}
+        aria-label={c("पदाधिकारी खोजें", "Search directory")}
         className="w-full rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-saffron"
       />
       {filtered.length === 0 && (
-        <p className="py-3 text-center text-xs text-gray-500">कोई पदाधिकारी नहीं मिला।</p>
+        <p className="py-3 text-center text-xs text-gray-500">{c("कोई पदाधिकारी नहीं मिला।", "No directory entries found.")}</p>
       )}
       {filtered.map((s) => (
         <div key={s.id} className="rounded-2xl border border-amber-200 bg-amber-50 p-3">
@@ -42,12 +45,12 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
             </div>
             <div className="min-w-0">
               <h4 className="truncate text-xs font-bold text-gray-800">{s.nameHi}</h4>
-              <p className="text-[10px] font-semibold text-saffron">पद: {s.pad}</p>
+              <p className="text-[10px] font-semibold text-saffron">{c("पद: ", "Role: ")}{s.pad}</p>
             </div>
           </div>
           {s.verified && (
             <div className="mt-2 border-t border-amber-200 pt-2">
-              <Badge variant="verified">✔ सत्यापित डिजिटल परिचय पत्र (क्यूआर)</Badge>
+              <Badge variant="verified">✔ {c("सत्यापित डिजिटल परिचय पत्र (क्यूआर)", "Verified digital ID (QR)")}</Badge>
             </div>
           )}
         </div>
@@ -55,9 +58,9 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
 
       {/* स्मृति खंड — दिवंगत संत (solemn) + गोल्डन बाबा (जीवित) की जीवन-गाथा */}
       <div className="space-y-2 rounded-2xl border border-stone-300 bg-stone-100 p-3.5">
-        <h4 className="text-xs font-bold text-stone-800">स्मृति खंड (दिवंगत संत)</h4>
+        <h4 className="text-xs font-bold text-stone-800">{c("स्मृति खंड (दिवंगत संत)", "In memoriam (departed saints)")}</h4>
         {memorials.length === 0 ? (
-          <p className="text-xs text-gray-600">स्मृति-सूची शीघ्र उपलब्ध होगी।</p>
+          <p className="text-xs text-gray-600">{c("स्मृति-सूची शीघ्र उपलब्ध होगी।", "The memorial list will be available soon.")}</p>
         ) : (
           <ul className="space-y-1">
             {memorials.map((s) => (
@@ -73,7 +76,7 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
           className="w-full py-1.5 text-[11px]"
           onClick={() => openModal("GOLDEN_BABA")}
         >
-          श्रद्धेय गोल्डन बाबा — जीवन गाथा देखें
+          {c("श्रद्धेय गोल्डन बाबा — जीवन गाथा देखें", "Read the life story of revered Golden Baba")}
         </Button>
       </div>
     </div>
@@ -81,29 +84,30 @@ export default function DirectorySection({ saints }: { saints: SaintRow[] }) {
 }
 
 // संकल्प ई-सर्टिफिकेट — clean UI now, PDF v2 (PRD §9.3)
-export function CertificateDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function CertificateDialog({ open, onClose, locale = "hi" }: { open: boolean; onClose: () => void; locale?: Locale }) {
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent>
         <DialogTitle className="text-center text-sm font-bold text-maroonText">
-          संकल्प ई-प्रमाण पत्र
+          {c("संकल्प ई-प्रमाण पत्र", "Seva commitment certificate")}
         </DialogTitle>
         <div className="rounded-2xl border-2 border-gold bg-gradient-to-br from-amber-50 to-orange-50 p-4 text-center">
           <p className="text-2xl font-bold text-maroonText">ॐ</p>
-          <p className="mt-1 text-xs text-gray-600">श्री पंचायती अखाड़ा निरंजनी</p>
-          <p className="mt-3 text-[10px] uppercase tracking-wider text-gray-500">प्रमाणित किया जाता है कि</p>
-          <p className="mt-1 text-sm font-bold text-maroonText">देश प्रेमी</p>
+          <p className="mt-1 text-xs text-gray-600">Shri Panchayati Akhara Niranjani</p>
+          <p className="mt-3 text-[10px] uppercase tracking-wider text-gray-500">{c("प्रमाणित किया जाता है कि", "This certifies that")}</p>
+          <p className="mt-1 text-sm font-bold text-maroonText">{c("देश प्रेमी", "Devotee")}</p>
           <p className="mt-1 text-[11px] text-gray-600">
-            भक्त एवं सेवा सहयोगी (आईडी: SN-2027-9842) ने सनातन सेवा हेतु अपना संकल्प प्रदान किया है।
+            {c("भक्त एवं सेवा सहयोगी (आईडी: SN-2027-9842) ने सनातन सेवा हेतु अपना संकल्प प्रदान किया है।", "The devotee and seva volunteer (ID: SN-2027-9842) has pledged to serve the Sanatan community.")}
           </p>
-          <p className="mt-3 text-[9px] text-gray-500">डिजिटल प्रमाणपत्र • sanatanniranjani.in</p>
+          <p className="mt-3 text-[9px] text-gray-500">{c("डिजिटल प्रमाणपत्र • sanatanniranjani.in", "Sample digital certificate • sanatanniranjani.in")}</p>
         </div>
         <Button suppressHydrationWarning
           variant="primary"
           className="w-full"
-          onClick={() => toast.message("PDF डाउनलोड शीघ्र उपलब्ध होगा।")}
+          onClick={() => toast.message(c("PDF डाउनलोड शीघ्र उपलब्ध होगा।", "PDF download is not available yet."))}
         >
-          डाउनलोड करें
+          {c("डाउनलोड करें", "Download")}
         </Button>
       </DialogContent>
     </Dialog>

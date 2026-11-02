@@ -6,15 +6,19 @@ import { getSessionUser } from "@/lib/auth";
 import { t } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n-server";
 import { safeNextPath } from "@/lib/next-path";
+import { localeCopy } from "@/lib/locale-copy";
 
 // Session-aware page: always rendered per-request so an authenticated visitor is
 // redirected instead of being served a cached logged-out form.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "लॉग इन",
-  description: "सनातन श्री निरंजनी खाते में लॉग इन करें — बुकिंग, सेवा एवं दान की जानकारी।",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: localeCopy(locale, "लॉग इन", "Log in"),
+    description: localeCopy(locale, "सनातन श्री निरंजनी खाते में लॉग इन करें — बुकिंग, सेवा एवं दान की जानकारी।", "Log in to your Sanatan Shri Niranjani account to view bookings and seva information."),
+  };
+}
 
 
 export default async function LoginPage({

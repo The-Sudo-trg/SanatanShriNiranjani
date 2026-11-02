@@ -4,6 +4,8 @@ import Link from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { buildSearchIndex, searchContent, type SearchHit } from "@/lib/site-search";
+import { localeCopy } from "@/lib/locale-copy";
+import type { Locale } from "@/lib/i18n";
 
 // Site search (brief Phase 7): debounced, keyboard-navigable list, aria-live
 // announcements, highlighted terms, useful empty state. Local index — no
@@ -35,7 +37,8 @@ function Highlight({ text, term }: { text: string; term: string }) {
   );
 }
 
-export default function SiteSearch() {
+export default function SiteSearch({ locale }: { locale: Locale }) {
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [activeIdx, setActiveIdx] = useState(-1);
@@ -79,8 +82,8 @@ export default function SiteSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="मन्दिर, मंत्र, पर्व, पृष्ठ खोजें…"
-          aria-label="साइट में खोजें"
+          placeholder={c("मन्दिर, मंत्र, पर्व, पृष्ठ खोजें…", "Search temples, mantras, festivals, pages…")}
+          aria-label={c("साइट में खोजें", "Search the site")}
           aria-describedby="search-help"
           role="combobox"
           aria-expanded={hits.length > 0}
@@ -94,26 +97,30 @@ export default function SiteSearch() {
               setQuery("");
               inputRef.current?.focus();
             }}
-            aria-label="खोज साफ़ करें"
+            aria-label={c("खोज साफ़ करें", "Clear search")}
             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-2 text-muted hover:text-charcoal"
           >
             <X className="h-4 w-4" aria-hidden />
           </button>
         )}
         <p id="search-help" className="sr-only">
-          ऊपर-नीचे तीर कुंजी से परिणाम चुनें, Enter से खोलें।
+          {c("ऊपर-नीचे तीर कुंजी से परिणाम चुनें, Enter से खोलें.", "Use the arrow keys to select a result and Enter to open it.")}
         </p>
       </div>
 
       <div id="search-results" aria-live="polite">
         <p role="status" className="text-xs text-muted">
-          {debounced ? `${hits.length} परिणाम मिले` : "खोजने के लिए टाइप करें"}
+          {debounced
+            ? locale === "en"
+              ? `${hits.length} results found`
+              : `${hits.length} परिणाम मिले`
+            : c("खोजने के लिए टाइप करें", "Type to search")}
         </p>
         {debounced && hits.length === 0 && (
           <div className="mt-4 rounded-2xl border border-dashed border-warmBorder bg-surface p-10 text-center">
-            <p className="font-heading text-lg font-bold text-charcoal">कुछ नहीं मिला</p>
+            <p className="font-heading text-lg font-bold text-charcoal">{c("कुछ नहीं मिला", "No results found")}</p>
             <p className="mt-1 text-sm text-muted">
-              वर्तनी जाँचें, या हिन्दी/English दोनों आज़माएँ — जैसे &quot;कालकाजी&quot; या &quot;Kalkaji&quot;।
+              {c("वर्तनी जाँचें, या हिन्दी/English दोनों आज़माएँ — जैसे \"कालकाजी\" या \"Kalkaji\"।", "Check the spelling, or try both Hindi and English—for example, \"कालकाजी\" or \"Kalkaji\".")}
             </p>
           </div>
         )}
@@ -130,12 +137,14 @@ export default function SiteSearch() {
                 }`}
               >
                 <span className="mr-2 rounded-full bg-tealSoft px-2 py-0.5 text-[10px] font-bold text-teal">
-                  {KIND_LABEL[hit.kind]}
+                  {locale === "en"
+                    ? { temple: "Temple", mantra: "Mantra", festival: "Festival", wisdom: "Reflection", page: "Page" }[hit.kind]
+                    : KIND_LABEL[hit.kind]}
                 </span>
                 <span className="font-bold text-charcoal">
-                  <Highlight text={hit.titleHi} term={debounced} />
+                  <Highlight text={locale === "en" ? hit.titleEn ?? hit.titleHi : hit.titleHi} term={debounced} />
                 </span>
-                {hit.titleEn && (
+                {locale === "hi" && hit.titleEn && (
                   <span className="ml-2 text-xs text-muted">
                     <Highlight text={hit.titleEn} term={debounced} />
                   </span>

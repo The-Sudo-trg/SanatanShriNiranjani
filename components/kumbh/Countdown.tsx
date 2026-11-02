@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { localeCopy } from "@/lib/locale-copy";
+import type { Locale } from "@/lib/i18n";
 
 // Kumbh countdown — real clock, Asia/Kolkata anchored, never negative/NaN (TC-KB-02)
-export default function Countdown({ targetIso }: { targetIso: string }) {
+export default function Countdown({ targetIso, locale }: { targetIso: string; locale: Locale }) {
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
   const [days, setDays] = useState<number | null>(null);
 
   useEffect(() => {
@@ -23,12 +26,12 @@ export default function Countdown({ targetIso }: { targetIso: string }) {
   return (
     <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center shadow-sm">
       <p className="text-[10px] uppercase tracking-wider text-gray-500">
-        प्रथम शाही स्नान तक शेष दिन
+        {c("प्रथम शाही स्नान तक शेष दिन", "Days until the first royal bathing date")}
       </p>
       <p className="mt-1 text-3xl font-bold text-saffron tabular-nums">
         {days === null ? "…" : days}
       </p>
-      <p className="text-[10px] text-gray-500">हरिद्वार महाकुंभ 2027</p>
+      <p className="text-[10px] text-gray-500">{c("हरिद्वार महाकुंभ 2027", "Haridwar Maha Kumbh 2027")}</p>
     </div>
   );
 }

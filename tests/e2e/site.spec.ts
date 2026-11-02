@@ -4,6 +4,22 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("temple directory", () => {
+  test("English pages use English controls and disclose unavailable services", async ({ page }) => {
+    await page.goto("/en/temples");
+    await expect(page.getByRole("heading", { name: "Temple directory" })).toBeVisible();
+    await expect(page.getByLabel("Search temples")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Save:/ }).first()).toBeVisible();
+
+    await page.goto("/en/temples/kalkaji-mandir-new-delhi");
+    await expect(page.getByRole("heading", { name: /Kalkaji/ })).toBeVisible();
+    await expect(page.getByText("Likes and comments", { exact: false })).toBeVisible();
+    await expect(page.getByText(/Unavailable — no verified video or live stream/)).toBeVisible();
+
+    await page.goto("/en/bookings");
+    await expect(page.getByRole("heading", { name: "Bhandara booking" })).toBeVisible();
+    await expect(page.getByRole("alert")).toContainText("Bookings and payments cannot be accepted yet");
+  });
+
   test("lists temples, searches, filters and opens a detail page", async ({ page }) => {
     await page.goto("/temples");
     await expect(page.getByRole("heading", { name: "मंदिर सूची" })).toBeVisible();

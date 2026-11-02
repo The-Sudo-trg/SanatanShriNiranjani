@@ -6,30 +6,50 @@ import { toast } from "sonner";
 import FavoriteButton from "@/components/site/FavoriteButton";
 import { MANTRAS, type Mantra } from "@/lib/data/mantras";
 import { TEMPLE_CATEGORIES } from "@/lib/data/temples";
+import { localeCopy } from "@/lib/locale-copy";
+import type { Locale } from "@/lib/i18n";
 
 // Mantra library (brief §6.3): searchable, adjustable text size, copy/share,
 // traditional text clearly separated from editorial meaning. Audio is a
 // documented v2 stub (no licensed recordings yet — shown as शीघ्र).
-const CATEGORIES: Array<{ value: string; labelHi: string }> = [
-  { value: "", labelHi: "सभी" },
+const CATEGORY_NAMES: Record<string, string> = {
+  SHAIVA: "Shaiva (Shiva)",
+  VAISHNAVA: "Vaishnava (Vishnu/Krishna)",
+  DEVI: "Devi",
+  GANESHA: "Ganesha",
+  HANUMAN: "Hanuman",
+  VEDIC: "Vedic",
+  SHANTI: "Peace",
+  GURU: "Guru",
+};
+const DEITY_NAMES_EN: Record<string, string> = {
+  "सर्व देवता / All": "All deities",
+  "सविता (सूर्य देव)": "Savita (solar deity)",
+  "शिव": "Shiva",
+  "कृष्ण / हरि": "Krishna / Hari",
+  "विष्णु / वासुदेव": "Vishnu / Vasudeva",
+};
+const CATEGORIES: Array<{ value: string; labelHi: string; labelEn: string }> = [
+  { value: "", labelHi: "सभी", labelEn: "All" },
   ...TEMPLE_CATEGORIES.filter((c) =>
     ["SHAIVA", "VAISHNAVA", "DEVI", "GANESHA", "HANUMAN", "VEDIC", "SHANTI", "GURU"].includes(c.value)
-  ).map((c) => ({ value: c.value, labelHi: c.labelHi })),
+  ).map((c) => ({ value: c.value, labelHi: c.labelHi, labelEn: CATEGORY_NAMES[c.value] ?? c.labelEn })),
 ];
 
-function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
+function MantraCard({ mantra, textPx, locale }: { mantra: Mantra; textPx: number; locale: Locale }) {
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
 
   async function copy() {
-    const payload = `${mantra.text}\n\n${mantra.meaningHi}\n\n— ${mantra.source}`;
+    const payload = `${mantra.text}\n\n${locale === "en" ? mantra.meaningEn : mantra.meaningHi}\n\n— ${mantra.source}`;
     try {
       await navigator.clipboard.writeText(payload);
       setCopied(true);
-      toast.success("मंत्र कॉपी हो गया");
+      toast.success(c("मंत्र कॉपी हो गया", "Mantra copied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("कॉपी नहीं हो सका");
+      toast.error(c("कॉपी नहीं हो सका", "Could not copy"));
     }
   }
 
@@ -37,9 +57,9 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
     <article className="rounded-2xl border border-warmBorder bg-surface p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="font-heading text-lg font-bold text-charcoal">{mantra.titleHi}</h2>
+          <h2 className="font-heading text-lg font-bold text-charcoal">{locale === "en" ? mantra.titleEn : mantra.titleHi}</h2>
           <p className="text-xs text-muted">
-            {mantra.titleEn} • {mantra.deity}
+            {locale === "en" ? DEITY_NAMES_EN[mantra.deity] ?? "[Deity name translation to be confirmed]" : mantra.titleEn}
           </p>
         </div>
         <FavoriteButton
@@ -47,6 +67,7 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
           slug={mantra.slug}
           titleHi={mantra.titleHi}
           href={`/mantras#${mantra.slug}`}
+          locale={locale}
         />
       </div>
 
@@ -63,16 +84,16 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
       {open && (
         <div className="mt-4 space-y-3 border-t border-warmBorder pt-4">
           <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-saffron">अर्थ</h3>
-            <p className="mt-1 text-sm leading-relaxed text-charcoal">{mantra.meaningHi}</p>
-            <p className="mt-2 text-xs leading-relaxed text-muted">{mantra.meaningEn}</p>
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-saffron">{c("अर्थ", "Meaning")}</h3>
+            <p className="mt-1 text-sm leading-relaxed text-charcoal">{locale === "en" ? mantra.meaningEn : mantra.meaningHi}</p>
+            {locale === "hi" && <p className="mt-2 text-xs leading-relaxed text-muted">{mantra.meaningEn}</p>}
           </div>
           <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-teal">स्रोत / परम्परा</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-teal">{c("स्रोत / परम्परा", "Source / tradition")}</h3>
             <p className="mt-1 text-xs text-charcoal">{mantra.source}</p>
           </div>
           <p className="rounded-xl bg-cream p-3 text-[11px] text-muted">
-            मूल पाठ परम्परागत है; अर्थ-व्याख्या सम्पादकीय है — पाठ से अलग रूप में दी गई है।
+            {c("मूल पाठ परम्परागत है; अर्थ-व्याख्या सम्पादकीय है — पाठ से अलग रूप में दी गई है.", "The original text is traditional; the meaning is an editorial interpretation shown separately.")}
           </p>
         </div>
       )}
@@ -81,11 +102,11 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
         <button suppressHydrationWarning
           type="button"
           onClick={copy}
-          aria-label="मंत्र कॉपी करें"
+          aria-label={c("मंत्र कॉपी करें", "Copy mantra")}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-warmBorder bg-cream px-3 py-1.5 text-xs font-medium text-charcoal transition hover:border-saffron"
         >
           {copied ? <Check className="h-3.5 w-3.5 text-success" aria-hidden /> : <Copy className="h-3.5 w-3.5" aria-hidden />}
-          कॉपी
+          {c("कॉपी", "Copy")}
         </button>
         <button suppressHydrationWarning
           type="button"
@@ -93,20 +114,21 @@ function MantraCard({ mantra, textPx }: { mantra: Mantra; textPx: number }) {
           aria-expanded={open}
           className="inline-flex min-h-11 items-center rounded-full border border-warmBorder bg-cream px-3 py-1.5 text-xs font-medium text-charcoal transition hover:border-saffron"
         >
-          {open ? "अर्थ छिपाएँ" : "अर्थ एवं स्रोत देखें"}
+          {open ? c("अर्थ छिपाएँ", "Hide meaning") : c("अर्थ एवं स्रोत देखें", "View meaning and source")}
         </button>
         <span
           className="inline-flex min-h-11 items-center rounded-full bg-cream px-3 py-1.5 text-[11px] text-muted"
-          title="लाइसेंस-प्राप्त रिकॉर्डिंग उपलब्ध होने पर जोड़ी जाएगी"
+          title={c("लाइसेंस-प्राप्त रिकॉर्डिंग उपलब्ध होने पर जोड़ी जाएगी", "Audio will be added when licensed recordings are available")}
         >
-          ऑडियो: शीघ्र (v2)
+          {c("ऑडियो: शीघ्र (v2)", "Audio: coming soon (v2)")}
         </span>
       </div>
     </article>
   );
 }
 
-export default function MantraLibrary() {
+export default function MantraLibrary({ locale }: { locale: Locale }) {
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
   const [query, setQuery] = useState("");
   const [debounced, setDebounced] = useState("");
   const [category, setCategory] = useState("");
@@ -144,28 +166,28 @@ export default function MantraLibrary() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="मंत्र खोजें (हिन्दी या English)…"
-            aria-label="मंत्र खोजें"
+            placeholder={c("मंत्र खोजें (हिन्दी या English)…", "Search mantras in Hindi or English…")}
+            aria-label={c("मंत्र खोजें", "Search mantras")}
             className="w-full rounded-full border border-warmBorder bg-surface py-2.5 pl-9 pr-4 text-sm text-charcoal placeholder:text-muted focus:border-saffron focus:outline-none"
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          aria-label="श्रेणी"
+          aria-label={c("श्रेणी", "Category")}
           className="rounded-full border border-warmBorder bg-surface px-4 py-2.5 text-sm text-charcoal focus:border-saffron focus:outline-none"
         >
           {CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
-              {c.labelHi}
+              {locale === "en" ? c.labelEn : c.labelHi}
             </option>
           ))}
         </select>
-        <div className="flex items-center gap-1.5" role="group" aria-label="पाठ आकार">
+        <div className="flex items-center gap-1.5" role="group" aria-label={c("पाठ आकार", "Text size")}>
           <button suppressHydrationWarning
             type="button"
             onClick={() => setTextPx((p) => Math.max(16, p - 2))}
-            aria-label="पाठ छोटा करें"
+            aria-label={c("पाठ छोटा करें", "Decrease text size")}
             className="min-h-11 min-w-11 rounded-full border border-warmBorder bg-surface p-2.5 text-charcoal transition hover:border-saffron"
           >
             <ZoomOut className="h-4 w-4" aria-hidden />
@@ -173,7 +195,7 @@ export default function MantraLibrary() {
           <button suppressHydrationWarning
             type="button"
             onClick={() => setTextPx((p) => Math.min(34, p + 2))}
-            aria-label="पाठ बड़ा करें"
+            aria-label={c("पाठ बड़ा करें", "Increase text size")}
             className="min-h-11 min-w-11 rounded-full border border-warmBorder bg-surface p-2.5 text-charcoal transition hover:border-saffron"
           >
             <ZoomIn className="h-4 w-4" aria-hidden />
@@ -182,18 +204,18 @@ export default function MantraLibrary() {
       </div>
 
       <p aria-live="polite" role="status" className="text-xs text-muted">
-        {results.length} मंत्र
+        {locale === "en" ? `${results.length} mantras` : `${results.length} मंत्र`}
       </p>
 
       {results.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-warmBorder bg-surface p-10 text-center">
-          <p className="font-heading text-lg font-bold text-charcoal">कोई मंत्र नहीं मिला</p>
-          <p className="mt-1 text-sm text-muted">दूसरा शब्द आज़माएँ या सभी श्रेणियाँ चुनें।</p>
+          <p className="font-heading text-lg font-bold text-charcoal">{c("कोई मंत्र नहीं मिला", "No mantras found")}</p>
+          <p className="mt-1 text-sm text-muted">{c("दूसरा शब्द आज़माएँ या सभी श्रेणियाँ चुनें।", "Try another search or select all categories.")}</p>
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {results.map((m) => (
-            <MantraCard key={m.slug} mantra={m} textPx={textPx} />
+            <MantraCard key={m.slug} mantra={m} textPx={textPx} locale={locale} />
           ))}
         </div>
       )}

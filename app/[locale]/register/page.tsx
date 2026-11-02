@@ -6,16 +6,19 @@ import { getSessionUser } from "@/lib/auth";
 import { t } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n-server";
 import { safeNextPath } from "@/lib/next-path";
+import { localeCopy } from "@/lib/locale-copy";
 
 // Session-aware page: always rendered per-request so an authenticated visitor is
 // redirected instead of being served a cached logged-out form.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "पंजीकरण",
-  description:
-    "सनातन श्री निरंजनी परिवार से जुड़ें — भक्त, संत अथवा स्वयंसेवक के रूप में नया खाता बनाएँ।",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: localeCopy(locale, "पंजीकरण", "Create an account"),
+    description: localeCopy(locale, "सनातन श्री निरंजनी परिवार से जुड़ें — भक्त, संत अथवा स्वयंसेवक के रूप में नया खाता बनाएँ।", "Join the Sanatan Shri Niranjani community as a devotee, saint, or volunteer."),
+  };
+}
 
 
 export default async function RegisterPage({

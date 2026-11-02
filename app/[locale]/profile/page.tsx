@@ -12,11 +12,14 @@ import { getLocale } from "@/lib/i18n-server";
 // Per-user page: never cached, never indexed, always rendered from the session.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "मेरी प्रोफ़ाइल",
-  description: "आपका खाता, भूमिका एवं सेवा-विवरण।",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: t(locale, "auth.profile.title"),
+    description: locale === "en" ? "Your account, role, and service details." : "आपका खाता, भूमिका एवं सेवा-विवरण।",
+    robots: { index: false, follow: false },
+  };
+}
 
 /**
  * Avatar initials without an external image (no third-party request, no CLS).

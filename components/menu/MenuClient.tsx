@@ -18,6 +18,7 @@ import { useModalStore } from "@/stores/modals";
 import { roleLabelKey, t, type Locale } from "@/lib/i18n";
 import type { PublicUser } from "@/lib/auth";
 import type { SaintRow } from "@/lib/content";
+import { localeCopy } from "@/lib/locale-copy";
 
 /**
  * Avatar initials without an external image (no third-party request, no CLS).
@@ -52,6 +53,7 @@ export default function MenuClient({
   const [certOpen, setCertOpen] = useState(false);
   const [showDirectory, setShowDirectory] = useState(false);
   const openModal = useModalStore((s) => s.open);
+  const c = (hi: string, en: string) => localeCopy(locale, hi, en);
 
   return (
     <div className="space-y-4">
@@ -149,9 +151,9 @@ export default function MenuClient({
           className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-amber-600 py-2 text-xs font-bold text-white shadow transition hover:bg-amber-700"
         >
           <Users className="h-4 w-4" aria-hidden />
-          श्री पंचायती अखाड़ा निरंजनी (पदाधिकारी सूची)
+          {c("श्री पंचायती अखाड़ा निरंजनी (पदाधिकारी सूची)", "Shri Panchayati Akhara Niranjani (directory)")}
         </button>
-        {showDirectory && <DirectorySection saints={saints} />}
+        {showDirectory && <DirectorySection saints={saints} locale={locale} />}
         <Link
           href="/bookings"
           className="flex min-h-11 w-full items-center justify-center rounded-xl bg-stone-800 py-2 text-xs font-bold text-white shadow transition hover:bg-stone-900"
@@ -162,7 +164,7 @@ export default function MenuClient({
 
       {/* volunteer + certificate */}
       <div className="space-y-3 rounded-2xl border border-warmBorder bg-surface p-4 shadow-sm">
-        <h3 className="text-xs font-bold text-muted">सेवा एवं संकल्प</h3>
+        <h3 className="text-xs font-bold text-muted">{c("सेवा एवं संकल्प", "Seva and commitments")}</h3>
         {user?.role === "VOLUNTEER" ? (
           // Day 3 — the pass lives in the account: volunteers see it active here
           <div
@@ -180,7 +182,7 @@ export default function MenuClient({
             className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white shadow transition hover:bg-indigo-700"
           >
             <HeartHandshake className="h-4 w-4" aria-hidden />
-            {`निरंजनी युवा सेवा दल (${t(locale, "auth.role.volunteer")}) पंजीकरण`}
+            {locale === "en" ? `Niranjani youth seva team (${t(locale, "auth.role.volunteer")}) registration` : `निरंजनी युवा सेवा दल (${t(locale, "auth.role.volunteer")}) पंजीकरण`}
           </button>
         )}
         <button
@@ -190,11 +192,11 @@ export default function MenuClient({
           className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-saffron py-2 text-xs font-bold text-white shadow transition hover:bg-deepSaffron"
         >
           <ScrollText className="h-4 w-4" aria-hidden />
-          संकल्प ई-सर्टिफिकेट डाउनलोड करें
+          {c("संकल्प ई-सर्टिफिकेट डाउनलोड करें", "Download seva commitment certificate")}
         </button>
       </div>
 
-      <CertificateDialog open={certOpen} onClose={() => setCertOpen(false)} />
+      <CertificateDialog open={certOpen} onClose={() => setCertOpen(false)} locale={locale} />
     </div>
   );
 }
